@@ -1,0 +1,21 @@
+language: cpp
+
+compiler:
+	- clang
+
+os:
+	- linux
+
+addons:
+  apt:
+	sources: 
+		- llvm-toolchain-precise-3.9
+		- 
+	packages:
+		- clang-3.9
+		- gcc-multilib
+		- grub2-common
+
+script:
+	make
+	

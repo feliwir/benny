@@ -25,10 +25,13 @@ kernel.bin: $(OBJ_LINK_LIST) $(ARCHDIR)/linker.ld
 	$(CC) -T $(ARCHDIR)/linker.ld $(CFLAGS) -o $@ $(OBJ_LINK_LIST) $(LDFLAGS)
 
 %.o: %.c
-	$(CC) -c $< -o $@ -std=gnu11 $(CFLAGS) $(CPPFLAGS)
+	$(CC) -c $< -o $@ $(CFLAGS)
+
+%.o: %.cpp
+	$(CC) -c $< -o $@ $(CPPFLAGS)
 
 %.o: %.S
-	$(CC) -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
+	$(CC) -c $< -o $@ $(CFLAGS)
 
 .PHONY: clean
 clean:

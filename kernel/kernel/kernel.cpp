@@ -3,13 +3,13 @@
 #include <string.h>
 #include <stdio.h>
 
-void kernel_early(void)
+extern "C" void kernel_early(void)
 {
 
 }
 
 
-void kernel_main(void)
+extern "C" void kernel_main(void)
 {
 	
 }
