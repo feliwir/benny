@@ -9,12 +9,24 @@ os:
 addons:
   apt:
     sources:
-        - llvm-toolchain-precise-3.9
-        -
+        - llvm-toolchain-precise-3.8
     packages:
         - clang-3.9
         - gcc-multilib
-        - grub2-common
+        - flex
+        - bison
+
+install:
+    - mkdir deps && cd deps
+    - git clone git://git.savannah.gnu.org/grub.git && cd grub
+    - ./autogen.sh 
+    - ./configure 
+    - make -j2
+    - cd ../../
+    - ln -s ./deps/grub/grub-mkrescue grub-mkrescue
 
 script:
-    make
+    make-j2
+
+cache:
+  apt: true
