@@ -8,10 +8,7 @@ os:
 
 addons:
   apt:
-    sources:
-        - llvm-toolchain-precise-3.8
     packages:
-        - clang-3.8
         - gcc-multilib
         - flex
         - bison
@@ -26,7 +23,7 @@ install:
     - ln -s ./deps/grub/grub-mkrescue grub-mkrescue
 
 script:
-    make-j2
+    make -j2
 
 cache:
   apt: true
