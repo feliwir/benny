@@ -17,6 +17,8 @@ addons:
         - gcc-multilib
         - flex
         - bison
+        - qemu
+        - expect
 
 install:
     - mkdir deps && cd deps
@@ -29,7 +31,7 @@ install:
     - export PATH 
 
 script:
-    make -j2
+    make -j2 && expect test/test.expect
 
 cache:
     apt: true

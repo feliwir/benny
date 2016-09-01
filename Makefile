@@ -1,6 +1,7 @@
 SHELL = /bin/bash
 SUBDIRS = kernel
 OS      := benny
+ARCH    ?= i386
 
 .PHONY: all
 all: $(OS).iso
@@ -29,3 +30,4 @@ clean: tmpclean
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir $@; \
 	done
+
