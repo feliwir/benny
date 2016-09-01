@@ -28,7 +28,7 @@ kernel.bin: $(OBJ_LINK_LIST) $(ARCHDIR)/linker.ld
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 %.o: %.cpp
-	$(CC) -c $< -o $@ $(CPPFLAGS)
+	$(CXX) -c $< -o $@ $(CPPFLAGS)
 
 %.o: %.S
 	$(CC) -c $< -o $@ $(CFLAGS)

@@ -6,6 +6,11 @@ compiler:
 os:
     - linux
 
+env:
+    matrix:
+    - ARCH=i386
+    - ARCH=x86_64
+
 addons:
   apt:
     packages:
@@ -27,4 +32,4 @@ script:
     make -j2
 
 cache:
-  apt: true
+    apt: true
