@@ -20,7 +20,8 @@ install:
     - ./configure 
     - make -j2
     - cd ../../
-    - ln -s ./deps/grub/grub-mkrescue grub-mkrescue
+    - PATH=$(pwd)/deps/grub/:$PATH
+    - export PATH 
 
 script:
     make -j2
