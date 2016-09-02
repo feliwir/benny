@@ -31,7 +31,7 @@ install:
     - export PATH 
 
 script:
-    make -j2 && expect test/test.expect
+    make -j2 && test/is_multiboot.sh && expect test/test.expect
 
 cache:
     apt: true
