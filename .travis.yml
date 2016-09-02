@@ -7,6 +7,9 @@ os:
     - linux
 
 env:
+    global:
+    - CC=clang-3.8
+    - CXX=clang++-3.8
     matrix:
     - ARCH=i386
     - ARCH=x86_64
@@ -19,6 +22,7 @@ addons:
         - bison
         - qemu
         - expect
+        - llvm-toolchain-precise-3.8
 
 install:
     - mkdir deps && cd deps

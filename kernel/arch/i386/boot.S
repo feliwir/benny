@@ -17,13 +17,16 @@
 stack_bottom:
 .skip 16384 # 16 KiB
 stack_top:
-
+	
 # The kernel entry point.
 .section .text
 .global _start
 .type _start, @function
 _start:
 	movl $stack_top, %esp
+
+	movl $0xb8000, %edi
+	addl $30, (%edi)
 
 	# Initialize the core kernel before running the global constructors.
 	call kernel_early
