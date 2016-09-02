@@ -7,9 +7,6 @@ os:
     - linux
 
 env:
-    global:
-    - CC=clang-3.8
-    - CXX=clang++-3.8
     matrix:
     - ARCH=i386
     - ARCH=x86_64
@@ -33,7 +30,8 @@ install:
     - cd ../../
     - PATH=$(pwd)/deps/grub/:$PATH
     - export PATH 
-
+    - export CC=clang-3.8
+    - export CXX=clang++-3.8
 script:
     make -j2 && test/is_multiboot.sh && expect test/test.expect
 
