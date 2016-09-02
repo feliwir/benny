@@ -33,7 +33,7 @@ install:
     - export CC=clang-3.8
     - export CXX=clang++-3.8
 script:
-    make -j2 && test/is_multiboot.sh && expect test/test.expect
+    make -j2  CC=clang-3.8 CXX=clang++-3.8 && test/is_multiboot.sh && expect test/test.expect
 
 cache:
     apt: true
