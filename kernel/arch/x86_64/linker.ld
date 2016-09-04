@@ -28,6 +28,10 @@ SECTIONS
 	/* Read-write data (initialized) */
 	.data BLOCK(4K) : ALIGN(4K)
 	{
+		start_ctors = .;
+		KEEP(*( .ctors ));
+		KEEP(*(SORT_BY_INIT_PRIORITY( .ctors.* )));
+		end_ctors = .;
 		*(.data)
 	}
 

@@ -29,17 +29,23 @@ class Vga
 
         void Clear();
         void Write(const char* string);
+        void PutChar(const char,const uint8_t x,const uint8_t y);
     private:
-        static inline uint8_t MakeColor(const Color fg, const Color bg) 
+
+        static constexpr uint8_t MakeColor(const Color fg, const Color bg) 
         {
             return fg | bg << 4;
         }
 
-        static inline uint16_t MakeEntry(const unsigned char uc, const uint8_t color) 
+        static constexpr uint16_t MakeEntry(const unsigned char uc, const uint8_t color) 
         {
             return (uint16_t) uc | (uint16_t) color << 8;
         }
     private:
-        static const uintptr_t VGA_MEM;
-        uint16_t* m_index;
+        static constexpr uintptr_t VGA_MEM  = 0xB8000;
+        static constexpr uint8_t VGA_WIDTH  = 80;
+        static constexpr uint8_t VGA_HEIGHT = 25;
+        uint8_t m_x;
+        uint8_t m_y;
+        uint8_t m_color;
 };

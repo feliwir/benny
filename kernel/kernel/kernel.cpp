@@ -1,15 +1,10 @@
 #include <vga.hpp>
 
-
-
-extern "C" /* Use C linkage for kernel_early. */
-void kernel_early(void)
-{
-
-}
+Vga terminal;
 
 extern "C" /* Use C linkage for kernel_main. */
 void kernel_main(void) 
 {
-    Vga terminal;
+    terminal.Clear();
+    terminal.Write("Hello kernel!");
 }
