@@ -7,6 +7,7 @@ CRTEND_OBJ	:=$(ARCHDIR)/crtend.o
 OBJS:=\
 $(ARCH_OBJS) \
 kernel/kernel.o \
+kernel/vga.o \
 
 ALL_OUR_OBJS:=\
 $(CRTBEGIN_OBJ) \

@@ -1,4 +1,4 @@
-if grub-file --is-x86-multiboot kernel/make.config; then
+if grub-file --is-x86-multiboot kernel/kernel.bin; then
   echo multiboot confirmed
   exit 0
 else
