@@ -25,6 +25,10 @@ stack_top:
 _start:
 	mov $stack_top, %esp
 
+	# Push multiboot magic and multiboot struct
+	pushl %eax
+	pushl %ebx
+
 	# Call constructors from global objects
 	call initialiseConstructors
 

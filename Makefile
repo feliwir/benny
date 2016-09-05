@@ -9,7 +9,7 @@ all: $(OS).iso
 $(OS).iso: $(SUBDIRS) tmpclean
 	mkdir -p iso/boot/grub
 	cp kernel/kernel.bin iso/boot/kernel.bin
-	cp grub.cfg iso/boot/grub/grub.cfg
+	cp kernel/grub.cfg iso/boot/grub/grub.cfg
 	grub-mkrescue -o $(OS).iso iso
 
 .PHONY: $(SUBDIRS)

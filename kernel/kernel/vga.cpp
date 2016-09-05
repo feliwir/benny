@@ -24,7 +24,13 @@ void Vga::PutChar(const char c, const uint8_t x, const uint8_t y) {
 
 void Vga::Write(const char *string) {
   while (*string) {
-    PutChar(*string, m_x, m_y);
+    if (*string == '\n') {
+      ++m_y;
+      m_x = 0;
+    } else {
+      PutChar(*string, m_x, m_y);
+      ++m_x;
+    }
     ++string;
   }
 }
