@@ -1,3 +1,4 @@
+.code32
 # Declare constants used for creating a multiboot header.
 .set ALIGN,    1<<0             # align loaded modules on page boundaries
 .set MEMINFO,  1<<1             # provide memory map
@@ -25,13 +26,10 @@ stack_top:
 _start:
 	mov $stack_top, %esp
 
-	# Push multiboot magic and multiboot struct
-	pushl %eax
-	pushl %ebx
-
 	# Call constructors from global objects
 	call initialiseConstructors
 
+	# Transfer control to the main kernel.
 	call kernel_main
 
 	# Hang if kernel_main unexpectedly returns.
@@ -39,4 +37,6 @@ _start:
 .Lhang:
 	hlt
 	jmp .Lhang
+
+
 .size _start, . - _start

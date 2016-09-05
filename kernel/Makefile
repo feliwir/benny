@@ -19,7 +19,7 @@ kernel.bin: $(OBJS) $(ARCHDIR)/linker.ld
 %.o: %.cpp
 	$(CXX) -c $< -o $@ $(CPPFLAGS)
 
-%.o: %.S
+%.o: %.asm
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 .PHONY: clean
