@@ -7,4 +7,7 @@ extern "C" /* Use C linkage for kernel_main. */
     kernel_main(void) {
   terminal.Clear();
   terminal.Write("Hello kernel!");
+
+  while(true)
+  {}
 }

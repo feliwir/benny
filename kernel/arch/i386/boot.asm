@@ -13,7 +13,7 @@
 .long CHECKSUM
 
 # Reserve a stack for the initial thread.
-.section .bootstrap_stack, "aw", @nobits
+.section .bss, "aw", @nobits
 stack_bottom:
 .skip 16384 # 16 KiB
 stack_top:
@@ -25,15 +25,25 @@ stack_top:
 _start:
 	mov $stack_top, %esp
 
+	call check_multiboot
+
 	# Call constructors from global objects
 	call initialiseConstructors
 
 	# Transfer control to the main kernel.
-	call kernel_main
-
-	# Hang if kernel_main unexpectedly returns.
-	cli
-.Lhang:
-	hlt
-	jmp .Lhang
+	.extern kernel_main
+	jmp kernel_main
+error:
+    movl $0x4f524f45, 0xb8000
+	movl $0x4f3a4f52, 0xb8004
+	movl $0x4f204f20, 0xb8008	
+	movb %al		, 0xb800a
+    hlt
+check_multiboot:
+    cmp $0x2BADB002, %eax
+    jne .no_multiboot
+    ret
+.no_multiboot:
+    movb $'0', %al
+    jmp error
 .size _start, . - _start
