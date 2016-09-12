@@ -198,5 +198,3 @@ enable_paging:
     init_gdtr:
         .word 4 * 8
         .int init_gdt
-
- 
