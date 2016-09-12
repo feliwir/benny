@@ -94,8 +94,8 @@ check_cpuid:
     popfd
     # Compare EAX and ECX. If they are equal then that means the bit wasn't
     # flipped, and CPUID isn't supported.
-    cmp %ecx, %eax
-    je .no_cpuid
+    xor %ecx, %eax
+    jz .no_cpuid
     ret
 .no_cpuid:
     mov $'1', %al
