@@ -1,44 +1,43 @@
 language: cpp
 sudo: required
 dist: trusty
-
 compiler:
-    - clang
-
+- clang
 os:
-    - linux
-
+- linux
 env:
-    matrix:
-    - ARCH=i386
-    - ARCH=x86_64
-
+  matrix:
+  - ARCH=i386
+  - ARCH=x86_64
 addons:
   apt:
     sources:
-        - llvm-toolchain-precise-3.8
+    - llvm-toolchain-precise-3.8
     packages:
-        - gcc-multilib
-        - flex
-        - bison
-        - qemu
-        - expect
-        - clang-3.8
-
+    - gcc-multilib
+    - flex
+    - bison
+    - qemu
+    - expect
+    - clang-3.8
 install:
-    - export CC=clang-3.8
-    - export CXX=clang++-3.8
-    - mkdir deps && cd deps
-    - git clone git://git.savannah.gnu.org/grub.git && cd grub
-    - ./autogen.sh 
-    - ./configure 
-    - make -j2
-    - cd ../../
-    - PATH=$(pwd)/deps/grub/:$PATH
-    - export PATH 
-
-script:
-    make -j2  CC=clang-3.8 CXX=clang++-3.8 && test/is_multiboot.sh && expect test/test.expect
-
+- export CC=clang-3.8
+- export CXX=clang++-3.8
+- mkdir deps && cd deps
+- git clone git://git.savannah.gnu.org/grub.git && cd grub
+- "./autogen.sh"
+- "./configure"
+- make -j2
+- cd ../../
+- PATH=$(pwd)/deps/grub/:$PATH
+- export PATH
+script: make -j2  CC=clang-3.8 CXX=clang++-3.8 && test/is_multiboot.sh && expect test/test.expect
+deploy:
+  provider: releases
+  api_key:
+    secure: bwGa/7W8iivIxEnPfN/4p5AzP4SG+RRvyRdIYPe3AKmKWOhpJ2TE3ySYz1hhBaH2IluWaCYiq/Vrjy8+OhbLfV4350MVvraJzVvPLVcFb5j0hJ4pUoFgoMklgvPA3BQrRMEVrpV0SzM4NLJ4F81sIuopsMoGnrWUEU3ZMPEqm6TNuf2Di/9yyiYyF0eJveN6ZXJ5oSKO9bgBv3NCUWNCY6HuCHpW6+/eMV/OdKg69lPT8jpVRq/QlrwDC3hW9toRhyJ6Ws4jfZucC6N4h6SMzIUxH1+3PCCSoNRMik4cpHEJFDaOl4BvzBwzM5NNjrPi5Q0JWGOnvvxck564q6nwVyX5Twe+ljp2tl+LB+dUfzpBT4+UTFLeWBpRtDPeSpdE25MCadB0AYxPYYsUaey9ycy5Bz8V9Gi5pA8yAUDgDZlajv9Y9B6kXa1W+f132KwWJsw8cS8TjOQhE5mVeT9xbyl3AGwyIdatg8PKuHScTYsRtCqrgE6PmaHJwCGfpvi0sTscmNDxWhSXEGAJJcbJ4d+dpPG9J+5OLRwPrlgiM8CsCMeIPclVv0iBL8bn6j9t3LGeoYixMiU08/PS7bpLSUClK1HdbzG7Cn/9BNAORlHDpXPGdxGx9vpe+py2T8SUMM8vnXhEi3cdGfDJPCH7RCi8aWdr9Ur2c24qygy6hIk=
+  file: benny.iso
+  on:
+    repo: feliwir/benny
 cache:
-    apt: true
+  apt: true

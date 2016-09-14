@@ -57,7 +57,6 @@ longmode:
 	call initialiseConstructors
 
 	# Transfer control to the main kernel.
-	.extern kernel_main
 	jmp kernel_main
 .code32
 # Print error with the error code
