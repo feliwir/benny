@@ -47,6 +47,6 @@ deploy:
   file: benny.iso
   on:
     repo: feliwir/benny
-    all_branches: true
+    branch: release
 cache:
   apt: true
