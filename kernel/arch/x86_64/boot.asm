@@ -200,4 +200,4 @@ enable_paging:
 
 	init_gdtr:
 		.word 4 * 8 - 1    # Size should have 1 subtracted from it
-		.quad init_gdt     # MDP: Int is 32-bit, init_gdt needs to be a quad.
+		.quad init_gdt
