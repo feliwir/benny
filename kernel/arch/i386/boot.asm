@@ -27,6 +27,8 @@ _start:
 
 	call check_multiboot
 
+	call setup_SSE
+
 	# Call constructors from global objects
 	call initialiseConstructors
 

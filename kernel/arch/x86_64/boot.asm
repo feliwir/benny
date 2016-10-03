@@ -36,6 +36,8 @@ _start:
 	# check for cpuid
 	call check_multiboot
 	call check_cpuid
+	# Setup SSE
+	call setup_SSE
 	call check_long_mode
 	call set_up_page_tables
 	call enable_paging
