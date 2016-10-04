@@ -4,6 +4,8 @@ include $(ARCHDIR)/make.config
 OBJS:=\
 $(ARCH_OBJS) \
 kernel/kernel.o \
+kernel/string.o \
+kernel/util.o \
 kernel/vga.o \
 kernel/cxx.o \
 
