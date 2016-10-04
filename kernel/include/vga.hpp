@@ -28,6 +28,10 @@ public:
   void Clear();
   void Write(const char *string);
   void PutChar(const char, const uint8_t x, const uint8_t y);
+  void Scroll(uint8_t amount);
+  void ClearLine();
+  void ClearLine(uint8_t y);
+  Vga &operator<<(const char *string);
 
 private:
   static constexpr uint8_t MakeColor(const Color fg, const Color bg) {
