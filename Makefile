@@ -12,6 +12,9 @@ $(OS).iso: $(SUBDIRS) tmpclean
 	cp kernel/grub.cfg iso/boot/grub/grub.cfg
 	grub-mkrescue -o $(OS).iso iso
 
+run:
+	qemu-system-$(ARCH) -cdrom $(OS).iso
+
 .PHONY: $(SUBDIRS)
 $(SUBDIRS):
 	$(MAKE) -C $@

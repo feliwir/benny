@@ -1,5 +1,6 @@
-#include <vga.hpp>
+#include <string.hpp>
 #include <util.hpp>
+#include <vga.hpp>
 
 Vga::Vga()
     : m_x(0), m_y(0), m_color(MakeColor(COLOR_LIGHT_GREY, COLOR_BLACK)) {}
@@ -23,9 +24,7 @@ void Vga::PutChar(const char c, const uint8_t x, const uint8_t y) {
   buffer[index] = MakeEntry(c, m_color);
 }
 
-void Vga::ClearLine() {
-  ClearLine(m_y);
-}
+void Vga::ClearLine() { ClearLine(m_y); }
 
 void Vga::ClearLine(uint8_t y) {
   uint16_t *buffer = reinterpret_cast<uint16_t *>(VGA_MEM);
@@ -39,10 +38,18 @@ Vga &Vga::operator<<(const char *string) {
   return *this;
 }
 
+Vga &Vga::operator<<(const int num) {
+  char buffer[32];
+  itoa(num, buffer, 10);
+  Write(buffer);
+  return *this;
+}
+
 void Vga::Scroll(uint8_t amount) {
   uint16_t *buffer = reinterpret_cast<uint16_t *>(VGA_MEM);
   if (amount < VGA_HEIGHT) {
-    memcpy(buffer, &buffer[amount * VGA_WIDTH], (VGA_HEIGHT - amount + 1) * VGA_WIDTH * sizeof(uint16_t));
+    memcpy(buffer, &buffer[amount * VGA_WIDTH],
+           (VGA_HEIGHT - amount + 1) * VGA_WIDTH * sizeof(uint16_t));
     for (int y = VGA_HEIGHT - 1; y > VGA_HEIGHT - amount - 1; --y) {
       ClearLine(y);
     }
@@ -62,7 +69,8 @@ void Vga::Write(const char *string) {
   while (*string) {
     if (*string == '\n') {
       ++m_y;
-      if (m_y == VGA_HEIGHT) { // This should never be > VGA_HEIGHT because of the previous check
+      if (m_y == VGA_HEIGHT) { // This should never be > VGA_HEIGHT because of
+        // the previous check
         Scroll(1);
       }
       m_x = 0;
