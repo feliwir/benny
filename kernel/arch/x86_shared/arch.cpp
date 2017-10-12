@@ -1,5 +1,7 @@
 #include "gdt.hpp"
 #include <arch.hpp>
-Gdt gdt;
 
-void Arch::Initialize() { gdt.Initialize(); }
+void Arch::Initialize() 
+{ 
+    GDT::Initialize(); 
+}
