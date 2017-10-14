@@ -3,16 +3,16 @@
 
 # Declare a header as in the Multiboot Standard.
 .section .multiboot
- multiboot_header:
+multiboot_header:
 # start header
 /*  magic */
 .long   MULTIBOOT2_HEADER_MAGIC
 /*  ISA: i386 */
-.long   GRUB_MULTIBOOT_ARCHITECTURE_I386
+.long   MULTIBOOT_ARCHITECTURE_I386
 /*  Header length. */
 .long   multiboot_header_end - multiboot_header
 /*  checksum */
-.long   -(MULTIBOOT2_HEADER_MAGIC + GRUB_MULTIBOOT_ARCHITECTURE_I386 + (multiboot_header_end - multiboot_header))
+.long  - (MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_ARCHITECTURE_I386 + (multiboot_header_end - multiboot_header))
 # end header
 .short MULTIBOOT_HEADER_TAG_END
 .short 0
@@ -49,4 +49,4 @@ check_multiboot:
 .no_multiboot:
     movb $'0', %al
     jmp error
-.size _start, . - _start
+.size start, . - start
