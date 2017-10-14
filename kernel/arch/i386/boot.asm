@@ -1,21 +1,23 @@
+#define ASM_FILE        1
 #include <multiboot.h>
-
-# Declare constants used for creating a multiboot header.
-.set MAGIC,   	0xE85250D6  # 'magic number' lets bootloader find the header
-.set ARCH,		0			# 0 x86, 4 MIPS
 
 # Declare a header as in the Multiboot Standard.
 .section .multiboot
-header_start:
+ multiboot_header:
 # start header
-.long MAGIC
-.long ARCH
-.long header_end-header_start
-.long 0x100000000 - (MAGIC + 0 + (header_end - header_start))
+/*  magic */
+.long   MULTIBOOT2_HEADER_MAGIC
+/*  ISA: i386 */
+.long   GRUB_MULTIBOOT_ARCHITECTURE_I386
+/*  Header length. */
+.long   multiboot_header_end - multiboot_header
+/*  checksum */
+.long   -(MULTIBOOT2_HEADER_MAGIC + GRUB_MULTIBOOT_ARCHITECTURE_I386 + (multiboot_header_end - multiboot_header))
 # end header
-.long 0
+.short MULTIBOOT_HEADER_TAG_END
+.short 0
 .long 8
-header_end:
+multiboot_header_end:
 
 # Reserve a stack for the initial thread.
 .section .bss, "aw", @nobits
@@ -41,7 +43,7 @@ start:
 	.extern kernel_main
 	jmp kernel_main
 check_multiboot:
-    cmp $0x2BADB002, %eax
+    cmp $0x36D76289, %eax
     jne .no_multiboot
     ret
 .no_multiboot:
