@@ -1,22 +1,22 @@
-#define ASM_FILE        1
-#include <multiboot.h>
+.set MAGIC, 0xE85250D6  # multiboot2 magic
+.set ARCH,	0			# i386 arch
 
 # Declare a header as in the Multiboot Standard.
 .section .multiboot
 multiboot_header:
 # start header
 /*  magic */
-.long   MULTIBOOT2_HEADER_MAGIC
+.long  MAGIC
 /*  ISA: i386 */
-.long   MULTIBOOT_ARCHITECTURE_I386
+.long   ARCH
 /*  Header length. */
 .long   multiboot_header_end - multiboot_header
 /*  checksum */
-.long  - (MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_ARCHITECTURE_I386 + (multiboot_header_end - multiboot_header))
+ .long  -(MAGIC + ARCH + (multiboot_header_end - multiboot_header))
 # end header
-.short MULTIBOOT_HEADER_TAG_END
 .short 0
-.long 8
+.short 0
+.long  8
 multiboot_header_end:
 
 # Reserve a stack for the initial thread.
@@ -43,7 +43,7 @@ start:
 	.extern kernel_main
 	jmp kernel_main
 check_multiboot:
-    cmp $0x36D76289, %eax
+    cmp $0x36D76289, %eax	# this is a MB2 compatible bootloader
     jne .no_multiboot
     ret
 .no_multiboot:
