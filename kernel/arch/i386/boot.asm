@@ -1,16 +1,21 @@
+#include <multiboot.h>
+
 # Declare constants used for creating a multiboot header.
-.set ALIGN,    1<<0             # align loaded modules on page boundaries
-.set MEMINFO,  1<<1             # provide memory map
-.set FLAGS,    ALIGN | MEMINFO  # this is the Multiboot 'flag' field
-.set MAGIC,    0x1BADB002       # 'magic number' lets bootloader find the header
-.set CHECKSUM, -(MAGIC + FLAGS) # checksum of above, to prove we are multiboot
+.set MAGIC,   	0xE85250D6  # 'magic number' lets bootloader find the header
+.set ARCH,		0			# 0 x86, 4 MIPS
 
 # Declare a header as in the Multiboot Standard.
 .section .multiboot
-.align 4
+header_start:
+# start header
 .long MAGIC
-.long FLAGS
-.long CHECKSUM
+.long ARCH
+.long header_end-header_start
+.long 0x100000000 - (MAGIC + 0 + (header_end - header_start))
+# end header
+.long 0
+.long 8
+header_end:
 
 # Reserve a stack for the initial thread.
 .section .bss, "aw", @nobits
@@ -20,9 +25,9 @@ stack_top:
 	
 # The kernel entry point.
 .section .text
-.global _start
-.type _start, @function
-_start:
+.global start
+.type start, @function
+start:
 	mov $stack_top, %esp
 
 	call check_multiboot

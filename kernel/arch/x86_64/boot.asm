@@ -3,7 +3,7 @@
 .set ALIGN,    1<<0             # align loaded modules on page boundaries
 .set MEMINFO,  1<<1             # provide memory map
 .set FLAGS,    ALIGN | MEMINFO  # this is the Multiboot 'flag' field
-.set MAGIC,    0x1BADB002       # 'magic number' lets bootloader find the header
+.set MAGIC,    0xE85250D6       # 'magic number' lets bootloader find the header
 .set CHECKSUM, -(MAGIC + FLAGS) # checksum of above, to prove we are multiboot
 
 # Declare a header as in the Multiboot Standard.
@@ -70,7 +70,7 @@ error:
 	hlt
 # Check if our bootloader is supporting multiboot
 check_multiboot:
-	cmp $0x2BADB002, %eax
+	cmp $0x36D76289, %eax
 	jne .no_multiboot
 	ret
 .no_multiboot:

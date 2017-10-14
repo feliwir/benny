@@ -1,4 +1,4 @@
-ENTRY(_start)
+ENTRY(start)
 OUTPUT_FORMAT(elf32-i386)
 OUTPUT_ARCH(i386:i386)
 
@@ -6,11 +6,15 @@ SECTIONS
 {
 	. = 1M;
 
-	.text BLOCK(4K) : ALIGN(4K)
+	.boot :
 	{
 		*(.multiboot)
-		*(.text)
 	}	
+
+	.text :
+    {
+        *(.text)
+    }
 
 	/* Read-write data (initialized) */
 	.data BLOCK(4K) : ALIGN(4K)
