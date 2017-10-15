@@ -6,13 +6,9 @@ SECTIONS
 {
 	. = 1M;
 
-	.boot :
-	{
-		*(.multiboot)
-	}	
-
-	.text :
+	.text BLOCK(4K) : ALIGN(4K)
     {
+		*(.multiboot)
         *(.text)
     }
 

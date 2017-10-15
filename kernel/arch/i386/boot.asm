@@ -8,11 +8,11 @@ multiboot_header:
 /*  magic */
 .long  MAGIC
 /*  ISA: i386 */
-.long   ARCH
+.long  ARCH
 /*  Header length. */
-.long   multiboot_header_end - multiboot_header
+.long  multiboot_header_end - multiboot_header
 /*  checksum */
- .long  -(MAGIC + ARCH + (multiboot_header_end - multiboot_header))
+ .long  0x100000000 - (MAGIC + ARCH + (multiboot_header_end - multiboot_header))
 # end header
 .short 0
 .short 0
@@ -42,6 +42,7 @@ start:
 	# Transfer control to the main kernel.
 	.extern kernel_main
 	jmp kernel_main
+	hlt
 check_multiboot:
     cmp $0x36D76289, %eax	# this is a MB2 compatible bootloader
     jne .no_multiboot
