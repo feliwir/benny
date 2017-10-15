@@ -1,5 +1,7 @@
 #pragma once
 
+class Vga;
+
 class Arch {
 public:
   void Initialize();

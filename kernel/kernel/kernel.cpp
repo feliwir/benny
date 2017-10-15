@@ -10,8 +10,9 @@ Arch architecture;
 extern "C" void kernel_main(uint32_t addr) {
   architecture.Initialize();
   terminal.Clear();
-  terminal << "Hello kernel!\n" << architecture.GetArchitecture() << "\n";
-
+  terminal << "Architecture: " << architecture.GetArchitecture() << "\n";
+  volatile int zero = 0; int a = 3 / zero;
+  terminal << a;
   while (true) {
   }
 }
