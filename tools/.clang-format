@@ -1,6 +1,6 @@
 AccessModifierOffset: 0
-AlignEscapedNewlinesLeft: true
-AlignTrailingComments: false
+AlignEscapedNewlinesLeft: false
+AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortFunctionsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: true
@@ -9,7 +9,12 @@ AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: false
 BinPackParameters: false
 BreakBeforeBinaryOperators: false
-BreakBeforeBraces: GNU
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterEnum: true
+  AfterStruct: true
+  SplitEmptyFunction: false
+  AfterFunction: true
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializersBeforeComma: false
 ColumnLimit: 120

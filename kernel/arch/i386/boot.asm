@@ -32,6 +32,13 @@ stack_top:
 start:
 	mov $stack_top, %esp
 
+	# Reset EFLAGS.
+	pushl $0
+	popf
+
+	# Push the pointer to the Multiboot information structure.
+	pushl   %ebx
+
 	call check_multiboot
 
 	call setup_SSE
@@ -42,6 +49,10 @@ start:
 	# Transfer control to the main kernel.
 	.extern kernel_main
 	jmp kernel_main
+
+	# Restore stack
+	add $4, %esp
+	
 	hlt
 check_multiboot:
     cmp $0x36D76289, %eax	# this is a MB2 compatible bootloader

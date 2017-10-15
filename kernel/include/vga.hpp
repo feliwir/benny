@@ -33,6 +33,7 @@ public:
   void ClearLine(uint8_t y);
   Vga &operator<<(const char *string);
   Vga &operator<<(const int num);
+  Vga &operator<<(const unsigned int num);
 
 private:
   static constexpr uint8_t MakeColor(const Color fg, const Color bg) {

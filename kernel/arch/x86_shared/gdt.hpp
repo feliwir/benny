@@ -2,27 +2,27 @@
 #include <stdint.h>
 
 enum SegmentAccess : uint8_t {
-  SA_NONE       = 0,
-  SA_ACCESSED   = (1 << 0),
-  SA_READABLE   = (1 << 1),
-  SA_WRITABLE   = (1 << 1),
-  SA_DIRECTION  = (1 << 2),
+  SA_NONE = 0,
+  SA_ACCESSED = (1 << 0),
+  SA_READABLE = (1 << 1),
+  SA_WRITABLE = (1 << 1),
+  SA_DIRECTION = (1 << 2),
   SA_CONFORMING = (1 << 2),
   SA_EXECUTABLE = (1 << 3),
-  SA_SEGMENT    = (1 << 4),
-  SA_RING0      = 0,
-  SA_RING1      = (1 << 5),
-  SA_RING2      = (1 << 6),
-  SA_RING3      = (1 << 5) | (1 << 6),
-  SA_PRESENT    = (1 << 7),
+  SA_SEGMENT = (1 << 4),
+  SA_RING0 = 0,
+  SA_RING1 = (1 << 5),
+  SA_RING2 = (1 << 6),
+  SA_RING3 = (1 << 5) | (1 << 6),
+  SA_PRESENT = (1 << 7),
 };
 
 enum SegmentFlags : uint8_t {
-  SF_NONE       = 0,
-  SF_AVAILABE   = (1 << 0),
-  SF_LONGMODE   = (1 << 1),
-  SF_USE32BIT   = (1 << 2),
-  SF_USE4KSIZE  = (1 << 3),
+  SF_NONE = 0,
+  SF_AVAILABE = (1 << 0),
+  SF_LONGMODE = (1 << 1),
+  SF_USE32BIT = (1 << 2),
+  SF_USE4KSIZE = (1 << 3),
 };
 
 struct SegmentDescriptor {
@@ -36,11 +36,10 @@ struct SegmentDescriptor {
 
   SegmentDescriptor();
 
-  SegmentDescriptor(uint32_t base, uint32_t length, uint8_t access, uint8_t flags);
-  
-  void SetFlags(uint8_t flags) {
-    this->flags0 = flags & 0x0F;
-  }
+  SegmentDescriptor(uint32_t base, uint32_t length, uint8_t access,
+                    uint8_t flags);
+
+  void SetFlags(uint8_t flags) { this->flags0 = flags & 0x0F; }
 
   uint8_t Flags() const { return this->flags0; }
 
@@ -62,13 +61,14 @@ struct SegmentDescriptor {
   }
 } __attribute__((packed));
 
-static_assert(sizeof(SegmentDescriptor) == 8, "SegmentDescriptor must be 8 bytes large.");
+static_assert(sizeof(SegmentDescriptor) == 8,
+              "SegmentDescriptor must be 8 bytes large.");
 
 class GDT {
 public:
   static void Initialize();
 
-  static SegmentDescriptor& Descriptor(const uint32_t index);
+  static SegmentDescriptor &Descriptor(const uint32_t index);
   static uint32_t Length();
 
 private:

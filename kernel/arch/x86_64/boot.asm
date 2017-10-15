@@ -42,11 +42,19 @@ _start:
 
 	# check for cpuid
 	call check_multiboot
+
+	# Push the pointer to the Multiboot information structure.
+	pushl   %ebx
+
 	call check_cpuid
+
 	# Setup SSE
 	call setup_SSE
+
 	call check_long_mode
+
 	call set_up_page_tables
+
 	call enable_paging
 	# load our new 64 bit GDT
 	lgdt init_gdtr
@@ -178,13 +186,13 @@ enable_paging:
 .size _start, . - _start
 
 .section .data
-	// Die GDT besteht nur aus 4 Deskriptoren: Null, 32-Bit-Code, Daten und
-	// 64-Bit-Code
+	# Die GDT besteht nur aus 4 Deskriptoren: Null, 32-Bit-Code, Daten und
+	# 64-Bit-Code
 	init_gdt:
-		// Null-Deskriptor
+		# Null-Deskriptor
 		.quad 0
 
-		// 32-Bit-Code-Deskriptor
+		# 32-Bit-Code-Deskriptor
 		.word 0xFFFF
 		.word 0x0000
 		.byte 0x00
@@ -192,7 +200,7 @@ enable_paging:
 		.byte 0xCF
 		.byte 0x00
 
-		// Daten-Deskriptor
+		# Daten-Deskriptor
 		.word 0xFFFF
 		.word 0x0000
 		.byte 0x00
@@ -200,7 +208,7 @@ enable_paging:
 		.byte 0xCF
 		.byte 0x00
 
-		// 64-Bit-Code-Deskriptor
+		# 64-Bit-Code-Deskriptor
 		.int 0
 		.byte 0
 		.byte 0x98
