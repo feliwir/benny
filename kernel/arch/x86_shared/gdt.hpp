@@ -1,7 +1,8 @@
 #pragma once
 #include <stdint.h>
 
-enum SegmentAccess : uint8_t {
+enum SegmentAccess : uint8_t
+{
   SA_NONE = 0,
   SA_ACCESSED = (1 << 0),
   SA_READABLE = (1 << 1),
@@ -17,7 +18,8 @@ enum SegmentAccess : uint8_t {
   SA_PRESENT = (1 << 7),
 };
 
-enum SegmentFlags : uint8_t {
+enum SegmentFlags : uint8_t
+{
   SF_NONE = 0,
   SF_AVAILABE = (1 << 0),
   SF_LONGMODE = (1 << 1),
@@ -25,7 +27,8 @@ enum SegmentFlags : uint8_t {
   SF_USE4KSIZE = (1 << 3),
 };
 
-struct SegmentDescriptor {
+struct SegmentDescriptor
+{
   uint16_t limit0;
   uint16_t base0;
   uint8_t base1;
@@ -34,45 +37,52 @@ struct SegmentDescriptor {
   uint8_t flags0 : 4;
   uint8_t base2;
 
-  SegmentDescriptor();
+  constexpr SegmentDescriptor()
+      : limit0(0), base0(0), base1(0), access(SA_NONE), limit1(0), flags0(0),
+        base2(0) {}
 
-  SegmentDescriptor(uint32_t base, uint32_t length, uint8_t access,
-                    uint8_t flags);
-
-  void SetFlags(uint8_t flags) { this->flags0 = flags & 0x0F; }
-
-  uint8_t Flags() const { return this->flags0; }
-
-  uint32_t Limit() const { return this->limit0 | (this->limit1 << 16); }
-
-  void SetLimit(uint32_t value) {
-    this->limit0 = (value & 0x0FFFF) >> 0;
-    this->limit1 = (value & 0xFFFFF) >> 16;
-  }
-
-  uint32_t Base() const {
-    return this->base0 | (this->base1 << 16) | (this->base2 << 24);
-  }
-
-  void SetBase(uint32_t value) {
-    this->base0 = (value & 0x0000FFFF) >> 0;
-    this->base1 = (value & 0x00FF0000) >> 16;
-    this->base2 = (value & 0xFF000000) >> 24;
+  constexpr SegmentDescriptor(uint32_t base, uint32_t length, uint8_t acc, uint8_t flags)
+      : base0((base & 0x0000FFFF) >> 0),
+        base1((base & 0x00FF0000) >> 16),
+        base2((base & 0xFF000000) >> 24),
+        flags0(flags & 0x0F),
+        limit0((((flags & SF_USE4KSIZE) ? length >> 12 : length) & 0x0FFFF) >> 0),
+        limit1((((flags & SF_USE4KSIZE) ? length >> 12 : length) & 0xFFFFF) >> 16),
+        access(acc)
+  {
   }
 } __attribute__((packed));
 
 static_assert(sizeof(SegmentDescriptor) == 8,
               "SegmentDescriptor must be 8 bytes large.");
 
-class GDT {
+class GDT
+{
 public:
   static void Initialize();
 
-  static SegmentDescriptor &Descriptor(const uint32_t index);
+  static const SegmentDescriptor& Descriptor(const uint32_t index);
   static uint32_t Length();
 
 private:
-  static const uint32_t s_length = 8;
-  static SegmentDescriptor s_descriptors[s_length];
+  static constexpr uint32_t s_length = 8;
+  static constexpr SegmentDescriptor s_descriptors[s_length] =
+      {
+          SegmentDescriptor(),
+          SegmentDescriptor(0x00000000, 0xFFFFFFFF,
+                            SA_PRESENT | SA_EXECUTABLE | SA_SEGMENT | SA_RING0,
+                            SF_USE4KSIZE | SF_USE32BIT),
+          SegmentDescriptor(0x00000000, 0xFFFFFFFF,
+                            SA_PRESENT | SA_WRITABLE | SA_SEGMENT | SA_RING0,
+                            SF_USE4KSIZE | SF_USE32BIT),
+          SegmentDescriptor(0x00000000, 0xFFFFFFFF,
+                            SA_PRESENT | SA_EXECUTABLE | SA_SEGMENT | SA_RING3,
+                            SF_USE4KSIZE | SF_USE32BIT),
+          SegmentDescriptor(0x00000000, 0xFFFFFFFF,
+                            SA_PRESENT | SA_WRITABLE | SA_SEGMENT | SA_RING3,
+                            SF_USE4KSIZE | SF_USE32BIT),
+          SegmentDescriptor(),
+          SegmentDescriptor(),
+          SegmentDescriptor()};
   GDT() = delete;
 };
