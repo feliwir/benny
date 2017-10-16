@@ -3,7 +3,7 @@
 #include <arch.hpp>
 #include <vga.hpp>
 
-void IntHandler_DivByZero() {
+__attribute__((interrupt)) void IntHandler_DivByZero(InterruptFrame *frame) {
   Vga screen;
   screen.Clear();
   screen << "Divison by zero! Panic!";

@@ -1,8 +1,28 @@
 #include "gdt.hpp"
 
+extern "C" void loadGDT();
+
 static SegmentDescriptor invalid;
 
-SegmentDescriptor &GDT::Descriptor(const uint32_t index) {
+SegmentDescriptor GDT::s_descriptors[GDT::s_length] = {
+    SegmentDescriptor(),
+    SegmentDescriptor(0x00000000, 0xFFFFFFFF,
+                      SA_PRESENT | SA_EXECUTABLE | SA_SEGMENT | SA_RING0,
+                      SF_USE4KSIZE | SF_USE32BIT),
+    SegmentDescriptor(0x00000000, 0xFFFFFFFF,
+                      SA_PRESENT | SA_WRITABLE | SA_SEGMENT | SA_RING0,
+                      SF_USE4KSIZE | SF_USE32BIT),
+    SegmentDescriptor(0x00000000, 0xFFFFFFFF,
+                      SA_PRESENT | SA_EXECUTABLE | SA_SEGMENT | SA_RING3,
+                      SF_USE4KSIZE | SF_USE32BIT),
+    SegmentDescriptor(0x00000000, 0xFFFFFFFF,
+                      SA_PRESENT | SA_WRITABLE | SA_SEGMENT | SA_RING3,
+                      SF_USE4KSIZE | SF_USE32BIT),
+    SegmentDescriptor(),
+    SegmentDescriptor(),
+    SegmentDescriptor()};
+
+const SegmentDescriptor &GDT::Descriptor(const uint32_t index) {
   if (index >= GDT::s_length) {
     return invalid;
   }
@@ -20,4 +40,6 @@ void GDT::Initialize() {
   };
 
   asm volatile("lgdt %0" : : "m"(gdtp));
+
+  loadGDT();
 }

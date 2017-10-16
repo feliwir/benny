@@ -1,6 +1,14 @@
 #pragma once
 #include <stdint.h>
 
+struct InterruptFrame {
+  uintptr_t ip;
+  uintptr_t cs;
+  uintptr_t flags;
+  uintptr_t sp;
+  uintptr_t ss;
+};
+
 enum GateType : uint8_t {
   GT_32bitTask = 0x5,
   GT_16bitInt = 0x6,
@@ -36,7 +44,8 @@ class IDT {
 public:
   static void Initialize();
 
-  static void AddHandler(int index, void (*func)(), int sel, GateType g);
+  static void AddHandler(int index, void (*func)(InterruptFrame *), int sel,
+                         GateType g);
 
 private:
   static const uint32_t s_length = 256;
