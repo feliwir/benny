@@ -7,8 +7,6 @@ __attribute__((interrupt)) void IntHandler_DivByZero(InterruptFrame *frame) {
   Vga screen;
   screen.Clear();
   screen << "Divison by zero! Panic!";
-  while (true) {
-  }
 }
 
 void Arch::Initialize() {
