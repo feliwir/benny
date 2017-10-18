@@ -14,6 +14,5 @@ extern "C" void kernel_main(uint32_t addr) {
   volatile int zero = 0;
   int a = 3 / zero;
   terminal << a;
-  while (true) {
-  }
+  asm volatile("hlt");
 }

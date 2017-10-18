@@ -25,6 +25,20 @@ enum SegmentFlags : uint8_t {
   SF_USE4KSIZE = (1 << 3),
 };
 
+constexpr const uint16_t CODE_SELECTOR = 0x08;
+constexpr const uint16_t DATA_SELECTOR = 0x10;
+constexpr const uint16_t LONG_SELECTOR = 0x18;
+constexpr const uint16_t USER_CODE_SELECTOR = 0x20;
+constexpr const uint16_t USER_DATA_SELECTOR = 0x28;
+constexpr const uint16_t TSS_SELECTOR = 0x30;
+
+constexpr const uint16_t SEG_LDT             = 0x2; ///< LDT
+constexpr const uint16_t SEG_TSS_AVAILABLE   = 0x9; ///< 64 bits TSS (Available)
+constexpr const uint16_t SEG_TSS_BUSY        = 0xB; ///< 64 bits TSS (Busy)
+constexpr const uint16_t SEG_CALL_GATE       = 0xC; ///< 64 bits Call Gate
+constexpr const uint16_t SEG_INTERRUPT_GATE  = 0xE; ///< 64 bits Interrupt Gate
+constexpr const uint16_t SEG_TRAP_GATE       = 0xE; ///< 64 bits Trap  Gate
+
 struct SegmentDescriptor {
   uint16_t limit0;
   uint16_t base0;

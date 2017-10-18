@@ -9,22 +9,19 @@ struct InterruptFrame {
   uintptr_t ss;
 };
 
-enum GateType : uint8_t {
-  GT_32bitTask = 0x5,
-  GT_16bitInt = 0x6,
-  GT_16bitTrap = 0x7,
-  GT_32bitInt = 0xE,
-  GT_32bitTrap = 0xF
-};
+struct InterruptFlags {
+  uint8_t type    : 4;
+  uint8_t zero    : 1;
+  uint8_t dpl     : 2;
+  uint8_t present : 1;
+} __attribute__((packed));
 
 struct InterruptDescriptor {
   uint16_t offset_1;
   uint16_t selector;
   uint8_t ist_index : 2; // LM only
   uint8_t reserved : 6;
-  uint8_t type : 4; // type
-  uint8_t dpl : 2;  // descriptor privelege level
-  uint8_t used : 1; // is this used?
+  InterruptFlags flags;
   uint16_t offset_2;
 #ifdef _x86_64_
   uint32_t offset_3;
@@ -44,9 +41,8 @@ class IDT {
 public:
   static void Initialize();
 
-  static void AddHandler(int index, void (*func)(InterruptFrame *), int sel,
-                         GateType g);
-
+  static void AddHandler(int index, void (*func)(InterruptFrame *), int sel,InterruptFlags flags);
+  static void AddHandler(int index, void (*func)(InterruptFrame *,uintptr_t), int sel,InterruptFlags flags);
 private:
   static const uint32_t s_length = 256;
   static InterruptDescriptor s_descriptors[s_length];

@@ -45,6 +45,13 @@ Vga &Vga::operator<<(const int num) {
   return *this;
 }
 
+Vga &Vga::operator<<(const unsigned int num) {
+  char buffer[32];
+  utoa(num, buffer, 10);
+  Write(buffer);
+  return *this;
+}
+
 void Vga::Scroll(uint8_t amount) {
   uint16_t *buffer = reinterpret_cast<uint16_t *>(VGA_MEM);
   if (amount < VGA_HEIGHT) {

@@ -1,7 +1,7 @@
 #pragma once
 #include <vga.hpp>
 
-void assert_func(bool condition, const char *file, int line) {
+void AssertFunc(bool condition, const char *file, int line) {
   if (!condition) {
     Vga terminal;
     terminal.Clear();
@@ -11,4 +11,4 @@ void assert_func(bool condition, const char *file, int line) {
   }
 }
 
-#define assert(COND) assert_func(COND, __FILE__, __LINE__)
+#define assert(COND) AssertFunc(COND, __FILE__, __LINE__)
