@@ -61,7 +61,7 @@ __attribute__((interrupt)) void Exception_DeviceNA(InterruptFrame *frame) {
 __attribute__((interrupt)) void Exception_DoubleFault(InterruptFrame *frame,uintptr_t err) {
   Vga screen;
   screen.Clear();
-  screen << "Double Fault! Code: "<< err << "\n";
+  screen << "Double Fault! Code: "<< static_cast<unsigned int>(err) << "\n";
   DumpRegisters(screen,frame);
   Panic(screen,"Cannot continue after fatal error!");
 }
@@ -69,7 +69,7 @@ __attribute__((interrupt)) void Exception_DoubleFault(InterruptFrame *frame,uint
 __attribute__((interrupt)) void Exception_InvalidTSS(InterruptFrame *frame,uintptr_t err) {
   Vga screen;
   screen.Clear();
-  screen << "Fault: Invalid TSS! Code: "<< err << "\n";
+  screen << "Fault: Invalid TSS! Code: "<< static_cast<unsigned int>(err) << "\n";
   DumpRegisters(screen,frame);
   Panic(screen,"Cannot continue after fatal error!");
 }
@@ -77,7 +77,7 @@ __attribute__((interrupt)) void Exception_InvalidTSS(InterruptFrame *frame,uintp
 __attribute__((interrupt)) void Exception_SegNotPres(InterruptFrame *frame,uintptr_t err) {
   Vga screen;
   screen.Clear();
-  screen << "Fault: Present bit for segment not set! Code: "<< err << "\n";
+  screen << "Fault: Present bit for segment not set! Code: "<< static_cast<unsigned int>(err) << "\n";
   DumpRegisters(screen,frame);
   Panic(screen,"Cannot continue after fatal error!");
 }
@@ -85,7 +85,7 @@ __attribute__((interrupt)) void Exception_SegNotPres(InterruptFrame *frame,uintp
 __attribute__((interrupt)) void Exception_StackSeg(InterruptFrame *frame,uintptr_t err) {
   Vga screen;
   screen.Clear();
-  screen << "Fault: Stack segment fault! Code: "<< err << "\n";
+  screen << "Fault: Stack segment fault! Code: "<< static_cast<unsigned int>(err) << "\n";
   DumpRegisters(screen,frame);
   Panic(screen,"Cannot continue after fatal error!");
 }
@@ -134,6 +134,10 @@ void IDT::AddHandler(int index, void (*func)(InterruptFrame *), int sel, Interru
   auto &d = IDT::s_descriptors[index];
   d.offset_1 = (addr & 0xFFFF);
   d.offset_2 = (addr >> 16) & 0xFFFF;
+  #ifdef _x86_64_
+  d.offset_3 = addr >> 32;
+  d.reserved2 = 0;
+  #endif
   d.selector = sel;
   d.flags = f;
   // other fields
@@ -146,6 +150,10 @@ void IDT::AddHandler(int index, void (*func)(InterruptFrame *,uintptr_t), int se
   auto &d = IDT::s_descriptors[index];
   d.offset_1 = (addr & 0xFFFF);
   d.offset_2 = (addr >> 16) & 0xFFFF;
+  #ifdef _x86_64_
+  d.offset_3 = (addr >> 32) & 0xFFFF;
+  d.reserved2 = 0;
+  #endif
   d.selector = sel;
   d.flags = f;
   // other fields

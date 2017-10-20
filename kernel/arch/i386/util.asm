@@ -1,4 +1,3 @@
-.code32
 .global loadGDT
 .section .text
 loadGDT:
