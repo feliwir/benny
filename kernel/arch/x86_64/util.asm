@@ -1,12 +1,18 @@
 .global loadGDT
 .section .text
 loadGDT:
-    # load the gdt stuff
-    sub $16, %rsp
-    movq $8, 8(%rsp)
-    movabsq $reloadCS, %rax
-    mov %rax, (%rsp)
-    lretq
+    # pop the return adress from the stack
+    pop %rax
+    push $0x10
+    push %rsp
+
+    pushfq
+    # call reloadCS
+    push $0x08
+
+    # push our return adress
+    push %rax
+    iretq
 reloadCS:
     movw $0x10, %ax
     mov %ax, %ds
