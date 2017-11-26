@@ -19,8 +19,8 @@ struct InterruptFlags {
 struct InterruptDescriptor {
   uint16_t offset_1;
   uint16_t selector;
-  uint8_t ist_index : 2; // LM only
-  uint8_t reserved : 6;
+  uint8_t ist_index : 3; // LM only
+  uint8_t reserved : 5;
   InterruptFlags flags;
   uint16_t offset_2;
 #ifdef _x86_64_
