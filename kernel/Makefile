@@ -6,7 +6,7 @@ $(ARCH_OBJS) \
 kernel/kernel.o \
 kernel/string.o \
 kernel/util.o \
-kernel/cxx.o \
+kernel/cxx.o
 
 .PHONY: all
 all: kernel.bin

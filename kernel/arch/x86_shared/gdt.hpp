@@ -20,8 +20,15 @@ enum SegmentAccess : uint8_t {
 enum SegmentFlags : uint8_t {
   SF_NONE = 0,
   SF_AVAILABE = (1 << 0),
-  SF_LONGMODE = (1 << 1),
+
+  // When set, the D bit (SF_USE32BIT) must be cleared.
+  // Must be 0 when not in IA-32e mode or for non-code segments
+  SF_LONGMODE = (1 << 1), 
+
+  // Default size; set for 32 bit, unset for 16 bit
   SF_USE32BIT = (1 << 2),
+
+  // Granularity
   SF_USE4KSIZE = (1 << 3),
 };
 
