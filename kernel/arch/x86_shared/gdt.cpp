@@ -58,10 +58,10 @@ void GDT::Initialize() {
 
 #ifdef _x86_64_
   static_assert(sizeof(gdtp) == 10,
-              "InterruptDescriptor must be 6 bytes long in Longmode.");
+              "gdtp must be 10 bytes long in Longmode.");
 #elif _i386_
   static_assert(sizeof(gdtp) == 6,
-              "InterruptDescriptor must be 8 bytes long in 32-bit mode.");
+              "gdtp must be 6 bytes long in 32-bit mode.");
 #endif
 
   asm volatile("lgdt %0" : : "m"(gdtp));

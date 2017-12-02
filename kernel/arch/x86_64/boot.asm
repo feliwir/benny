@@ -15,6 +15,19 @@ multiboot_header:
 /*  checksum */
  .long  0x100000000 - (MAGIC + ARCH + (multiboot_header_end - multiboot_header))
 # end header
+
+# Information request tag
+# type = 1
+.short 1
+# no flags
+.short 0
+# size = 12
+.long 12
+# memory map tag
+.long 6
+.long 0
+
+# Null tag
 .short 0
 .short 0
 .long  8
@@ -44,6 +57,7 @@ _start:
 	call check_multiboot
 
 	# Push the pointer to the Multiboot information structure.
+	pushl 	$0
 	pushl   %ebx
 
 	call check_cpuid
@@ -67,11 +81,10 @@ longmode:
 	movw %ax, %es
 	movw %ax, %ss
 
-	xorq %rdi, %rdi
-	mov %esp, %esp
-
 	# Call constructors from global objects
 	call initialiseConstructors
+
+	popq %rdi
 
 	# Transfer control to the main kernel.
 	jmp kernel_main

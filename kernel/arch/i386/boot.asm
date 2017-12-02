@@ -14,6 +14,19 @@ multiboot_header:
 /*  checksum */
  .long  0x100000000 - (MAGIC + ARCH + (multiboot_header_end - multiboot_header))
 # end header
+
+# Information request tag
+# type = 1
+.short 1
+# no flags
+.short 0
+# size = 12
+.long 12
+# memory map tag
+.long 6
+.long 0
+
+# Null tag
 .short 0
 .short 0
 .long  8
@@ -48,7 +61,7 @@ start:
 
 	# Transfer control to the main kernel.
 	.extern kernel_main
-	jmp kernel_main
+	call kernel_main
 
 	# Restore stack
 	add $4, %esp
