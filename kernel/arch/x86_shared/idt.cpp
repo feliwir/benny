@@ -90,34 +90,37 @@ __attribute__((interrupt)) void Exception_StackSeg(InterruptFrame *frame,uintptr
   Panic(screen,"Cannot continue after fatal error!");
 }
 
+__attribute__((interrupt)) void Exception_GenProtFault(InterruptFrame *frame,uintptr_t err) {
+  Vga screen;
+  screen.Clear();
+  screen << "Fault: General protection fault! Code: "<< static_cast<unsigned int>(err) << "\n";
+  DumpRegisters(screen,frame);
+  Panic(screen,"Cannot continue after fatal error!");
+}
 
-// General Protection Fault	13 (0xD)	Fault	#GP	Yes
-// Page Fault	14 (0xE)	Fault	#PF	Yes
-// Reserved	15 (0xF)	-	-	No
-// x87 Floating-Point Exception	16 (0x10)	Fault	#MF	No
-// Alignment Check	17 (0x11)	Fault	#AC	Yes
-// Machine Check	18 (0x12)	Abort	#MC	No
-// SIMD Floating-Point Exception	19 (0x13)	Fault	#XM/#XF	No
-// Virtualization Exception	20 (0x14)	Fault	#VE	No
-// Reserved	21-29 (0x15-0x1D)	-	-	No
-// Security Exception	30 (0x1E)	-	#SX	Yes
-// Reserved	31 (0x1F)	-	-	No
-// Triple Fault	-	-	-	No
-// FPU Error Interrupt	IRQ 13	Interrupt	#FERR	No
+__attribute__((interrupt)) void Exception_PageFault(InterruptFrame *frame,uintptr_t err) {
+  Vga screen;
+  screen.Clear();
+  screen << "Fault: Page fault! Code: "<< static_cast<unsigned int>(err) << "\n";
+  DumpRegisters(screen,frame);
+  Panic(screen,"Cannot continue after fatal error!");
+}
 
 void IDT::Initialize() {
-  IDT::AddHandler(0, &Exception_DivByZero,  CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
-  IDT::AddHandler(1, &Exception_Debug,      CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
-  IDT::AddHandler(3, &Exception_Breakpoint, CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
-  IDT::AddHandler(4, &Exception_Overflow,   CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
-  IDT::AddHandler(5, &Exception_OutOfBounds,CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
-  IDT::AddHandler(6, &Exception_InvalidOp,  CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
-  IDT::AddHandler(7, &Exception_DeviceNA,   CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
-  IDT::AddHandler(8, &Exception_DoubleFault,CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
-  IDT::AddHandler(10,&Exception_InvalidTSS, CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
-  IDT::AddHandler(11,&Exception_SegNotPres, CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
-  IDT::AddHandler(11,&Exception_StackSeg,   CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
-
+  IDT::AddHandler(0, &Exception_DivByZero,    CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::AddHandler(1, &Exception_Debug,        CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::AddHandler(3, &Exception_Breakpoint,   CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::AddHandler(4, &Exception_Overflow,     CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::AddHandler(5, &Exception_OutOfBounds,  CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::AddHandler(6, &Exception_InvalidOp,    CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::AddHandler(7, &Exception_DeviceNA,     CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::AddHandler(8, &Exception_DoubleFault,  CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::AddHandler(10,&Exception_InvalidTSS,   CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::AddHandler(11,&Exception_SegNotPres,   CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::AddHandler(12,&Exception_StackSeg,     CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::AddHandler(13,&Exception_GenProtFault, CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::AddHandler(14,&Exception_PageFault,    CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
+  
   struct {
     uint16_t limit;
     void *pointer;
