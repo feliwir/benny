@@ -6,6 +6,7 @@ $(ARCH_OBJS) \
 kernel/kernel.o \
 kernel/string.o \
 kernel/util.o \
+kernel/mmap.o \
 kernel/cxx.o
 
 .PHONY: all
