@@ -20,21 +20,19 @@ void MMap::Initialize(multiboot_tag_mmap *tag) {
       (reinterpret_cast<uintptr_t>(entry) - reinterpret_cast<uintptr_t>(tag)) +
           entry_size <=
       tag->size) {
-    for (int i = 0; i < MEMORY_INFO_MAX; ++i) {
+    for (auto &info : m_info) {
       // Check if the entries are contiguous
-      if (m_info[i].addr < entry->addr &&
-          (m_info[i].addr + m_info[i].length >= entry->addr) &&
-          m_info[i].type == entry->type) {
+      if (info.addr < entry->addr && (info.addr + info.length >= entry->addr) &&
+          info.type == entry->type) {
         // Current entry comes after this one
-        uint64_t difference = m_info[i].addr + m_info[i].length - entry->addr;
-        m_info[i].length += (entry->len - difference);
+        uint64_t difference = info.addr + info.length - entry->addr;
+        info.length += (entry->len - difference);
         goto loop_end;
       }
-      if (entry->addr < m_info[i].addr &&
-          (entry->addr + entry->len >= m_info[i].addr) &&
-          m_info[i].type == entry->type) {
+      if (entry->addr < info.addr && (entry->addr + entry->len >= info.addr) &&
+          info.type == entry->type) {
         // Current entry comes before this one
-        m_info[i].addr = entry->addr;
+        info.addr = entry->addr;
         goto loop_end;
       }
     }

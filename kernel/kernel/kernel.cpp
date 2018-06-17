@@ -3,6 +3,7 @@
 #include <mmap.hpp>
 #include <multiboot.h>
 #include <stdint.h>
+#include <util.hpp>
 #include <vga.hpp>
 
 Vga terminal;
@@ -11,8 +12,10 @@ MMap memoryMap;
 
 void processMultiboot(multiboot_tag *tag) {
   uint32_t total_size = tag->type;
-  terminal << "Total multiboot tags: " << total_size << "\n";
-  tag += MULTIBOOT_TAG_ALIGN;
+  terminal << "Total tags size: " << total_size << "\n";
+  advancePtr(tag, MULTIBOOT_TAG_ALIGN);
+
+  terminal << (int)sizeof(multiboot_tag) << "\n";
 
   while (tag->type != MULTIBOOT_TAG_TYPE_END) {
     terminal << "Processing tag: " << tag->type << "\n";
@@ -31,7 +34,9 @@ void processMultiboot(multiboot_tag *tag) {
                << "\n";
       break;
     }
-    tag += ((tag->size + MULTIBOOT_TAG_ALIGN - 1) & ~(MULTIBOOT_TAG_ALIGN - 1));
+    auto next =
+        ((tag->size + MULTIBOOT_TAG_ALIGN - 1) & ~(MULTIBOOT_TAG_ALIGN - 1));
+    advancePtr(tag, next);
   }
 
   terminal << "Done processing tags!"
