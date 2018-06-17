@@ -9,7 +9,7 @@ size_t strlen(const char *str) {
   return i;
 }
 
-char* itoa(int value, char *str, int base) {
+char *itoa(int value, char *str, int base) {
   char *rc;
   char *ptr;
   char *low;
@@ -44,7 +44,7 @@ char* itoa(int value, char *str, int base) {
   return rc;
 }
 
-char* utoa(unsigned int value, char *str, int base) {
+char *utoa(unsigned int value, char *str, int base) {
   char *rc;
   char *ptr;
   char *low;

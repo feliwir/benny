@@ -3,7 +3,6 @@
 #include <arch.hpp>
 #include <vga.hpp>
 
-
 void Arch::Initialize() {
   GDT::Initialize();
   IDT::Initialize();

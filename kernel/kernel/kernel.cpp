@@ -1,31 +1,42 @@
 #include <arch.hpp>
 #include <assert.hpp>
+#include <mmap.hpp>
 #include <multiboot.h>
 #include <stdint.h>
 #include <vga.hpp>
-#include <mmap.hpp>
 
 Vga terminal;
 Arch architecture;
 MMap memoryMap;
 
-void process_multiboot(multiboot_tag *tag) {
-	uint32_t total_size = tag->type;
-	tag += 8;
+void processMultiboot(multiboot_tag *tag) {
+  uint32_t total_size = tag->type;
+  terminal << "Total multiboot tags: " << total_size << "\n";
+  tag += MULTIBOOT_TAG_ALIGN;
 
-	while (tag->type != 0) {
+  while (tag->type != MULTIBOOT_TAG_TYPE_END) {
     terminal << "Processing tag: " << tag->type << "\n";
 
-		switch (tag->type) {
-		case 6: // Memory map
-			multiboot_tag_mmap *tag_mmap = reinterpret_cast<multiboot_tag_mmap*>(tag);
-      terminal << "Found memory map tag!" << "\n";
-			memoryMap.Initialize(tag_mmap);
-		}
-		tag = tag + ((tag->size + 7) / 8);
-	}
-}
+    switch (tag->type) {
+    case MULTIBOOT_TAG_TYPE_MMAP: // Memory map
+    {
+      multiboot_tag_mmap *tag_mmap =
+          reinterpret_cast<multiboot_tag_mmap *>(tag);
+      terminal << "Found memory map tag!"
+               << "\n";
+      memoryMap.Initialize(tag_mmap);
+    } break;
+    case MULTIBOOT_TAG_TYPE_BASIC_MEMINFO:
+      terminal << "Found basic memory info!"
+               << "\n";
+      break;
+    }
+    tag += ((tag->size + MULTIBOOT_TAG_ALIGN - 1) & ~(MULTIBOOT_TAG_ALIGN - 1));
+  }
 
+  terminal << "Done processing tags!"
+           << "\n";
+}
 
 extern "C" void kernel_main(multiboot_tag *tag) {
   architecture.Initialize();
@@ -33,7 +44,7 @@ extern "C" void kernel_main(multiboot_tag *tag) {
 
   terminal << "Architecture: " << architecture.GetArchitecture() << "\n";
 
-  process_multiboot(tag);
-  
+  processMultiboot(tag);
+
   asm volatile("hlt");
 }

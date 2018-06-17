@@ -23,7 +23,7 @@ enum SegmentFlags : uint8_t {
 
   // When set, the D bit (SF_USE32BIT) must be cleared.
   // Must be 0 when not in IA-32e mode or for non-code segments
-  SF_LONGMODE = (1 << 1), 
+  SF_LONGMODE = (1 << 1),
 
   // Default size; set for 32 bit, unset for 16 bit
   SF_USE32BIT = (1 << 2),
@@ -39,12 +39,12 @@ constexpr const uint16_t USER_CODE_SELECTOR = 0x20;
 constexpr const uint16_t USER_DATA_SELECTOR = 0x28;
 constexpr const uint16_t TSS_SELECTOR = 0x30;
 
-constexpr const uint16_t SEG_LDT             = 0x2; ///< LDT
-constexpr const uint16_t SEG_TSS_AVAILABLE   = 0x9; ///< 64 bits TSS (Available)
-constexpr const uint16_t SEG_TSS_BUSY        = 0xB; ///< 64 bits TSS (Busy)
-constexpr const uint16_t SEG_CALL_GATE       = 0xC; ///< 64 bits Call Gate
-constexpr const uint16_t SEG_INTERRUPT_GATE  = 0xE; ///< 64 bits Interrupt Gate
-constexpr const uint16_t SEG_TRAP_GATE       = 0xE; ///< 64 bits Trap  Gate
+constexpr const uint16_t SEG_LDT = 0x2;            ///< LDT
+constexpr const uint16_t SEG_TSS_AVAILABLE = 0x9;  ///< 64 bits TSS (Available)
+constexpr const uint16_t SEG_TSS_BUSY = 0xB;       ///< 64 bits TSS (Busy)
+constexpr const uint16_t SEG_CALL_GATE = 0xC;      ///< 64 bits Call Gate
+constexpr const uint16_t SEG_INTERRUPT_GATE = 0xE; ///< 64 bits Interrupt Gate
+constexpr const uint16_t SEG_TRAP_GATE = 0xE;      ///< 64 bits Trap  Gate
 
 struct SegmentDescriptor {
   uint16_t limit0;

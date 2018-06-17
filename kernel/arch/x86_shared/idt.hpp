@@ -10,9 +10,9 @@ struct InterruptFrame {
 };
 
 struct InterruptFlags {
-  uint8_t type    : 4;
-  uint8_t zero    : 1;
-  uint8_t dpl     : 2;
+  uint8_t type : 4;
+  uint8_t zero : 1;
+  uint8_t dpl : 2;
   uint8_t present : 1;
 } __attribute__((packed));
 
@@ -41,8 +41,11 @@ class IDT {
 public:
   static void Initialize();
 
-  static void AddHandler(int index, void (*func)(InterruptFrame *), int sel,InterruptFlags flags);
-  static void AddHandler(int index, void (*func)(InterruptFrame *,uintptr_t), int sel,InterruptFlags flags);
+  static void AddHandler(int index, void (*func)(InterruptFrame *), int sel,
+                         InterruptFlags flags);
+  static void AddHandler(int index, void (*func)(InterruptFrame *, uintptr_t),
+                         int sel, InterruptFlags flags);
+
 private:
   static const uint32_t s_length = 256;
   static InterruptDescriptor s_descriptors[s_length];
