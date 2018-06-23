@@ -6,32 +6,28 @@
 #include <util.hpp>
 #include <vga.hpp>
 
-Vga terminal;
+Vga term;
 Arch architecture;
 MMap memoryMap;
 
 void processMultiboot(multiboot_tag *tag) {
   uint32_t total_size = tag->type;
-  terminal << "Total tags size: " << total_size << "\n";
+  term << "Total tags size: " << total_size << term.endl;
   advancePtr(tag, MULTIBOOT_TAG_ALIGN);
 
-  terminal << (int)sizeof(multiboot_tag) << "\n";
+  term << (int)sizeof(multiboot_tag) << term.endl;
 
   while (tag->type != MULTIBOOT_TAG_TYPE_END) {
-    terminal << "Processing tag: " << tag->type << "\n";
-
     switch (tag->type) {
     case MULTIBOOT_TAG_TYPE_MMAP: // Memory map
     {
       multiboot_tag_mmap *tag_mmap =
           reinterpret_cast<multiboot_tag_mmap *>(tag);
-      terminal << "Found memory map tag!"
-               << "\n";
+      term << "Found memory map tag!" << term.endl;
       memoryMap.Initialize(tag_mmap);
     } break;
     case MULTIBOOT_TAG_TYPE_BASIC_MEMINFO:
-      terminal << "Found basic memory info!"
-               << "\n";
+      term << "Found basic memory info!" << term.endl;
       break;
     }
     auto next =
@@ -39,15 +35,14 @@ void processMultiboot(multiboot_tag *tag) {
     advancePtr(tag, next);
   }
 
-  terminal << "Done processing tags!"
-           << "\n";
+  term << "Done processing tags!" << term.endl;
 }
 
 extern "C" void kernel_main(multiboot_tag *tag) {
   architecture.Initialize();
-  terminal.Clear();
+  term.Clear();
 
-  terminal << "Architecture: " << architecture.GetArchitecture() << "\n";
+  term << "Architecture: " << architecture.GetArchitecture() << term.endl;
 
   processMultiboot(tag);
 

@@ -3,7 +3,8 @@
 #include <vga.hpp>
 
 Vga::Vga()
-    : m_x(0), m_y(0), m_color(MakeColor(COLOR_LIGHT_GREY, COLOR_BLACK)) {}
+    : m_x(0), m_y(0), m_color(MakeColor(COLOR_LIGHT_GREY, COLOR_BLACK)),
+      m_intMode(IM_DEC) {}
 
 Vga::~Vga() {}
 
@@ -38,16 +39,51 @@ Vga &Vga::operator<<(const char *string) {
   return *this;
 }
 
-Vga &Vga::operator<<(const int num) {
+Vga &Vga::operator<<(const char c) {
+  if (m_y >= VGA_HEIGHT) {
+    Scroll(m_y - VGA_HEIGHT + 1);
+  }
+
+  if (c == '\n') {
+    ++m_y;
+    if (m_y == VGA_HEIGHT) { // This should never be > VGA_HEIGHT because of
+      // the previous check
+      Scroll(1);
+    }
+    m_x = 0;
+  } else {
+    PutChar(c, m_x, m_y);
+    ++m_x;
+  }
+  return *this;
+}
+
+Vga &Vga::operator<<(const int32_t num) {
   char buffer[32];
-  itoa(num, buffer, 10);
+  if (m_intMode == IM_HEX)
+    Write("0x");
+
+  itoa(num, buffer, static_cast<int>(m_intMode));
   Write(buffer);
   return *this;
 }
 
-Vga &Vga::operator<<(const unsigned int num) {
+Vga &Vga::operator<<(const uint32_t num) {
   char buffer[32];
-  utoa(num, buffer, 10);
+  if (m_intMode == IM_HEX)
+    Write("0x");
+
+  utoa(num, buffer, static_cast<int>(m_intMode));
+  Write(buffer);
+  return *this;
+}
+
+Vga &Vga::operator<<(const uint64_t num) {
+  char buffer[32];
+  if (m_intMode == IM_HEX)
+    Write("0x");
+
+  ultoa(num, buffer, static_cast<int>(m_intMode));
   Write(buffer);
   return *this;
 }

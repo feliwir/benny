@@ -1,4 +1,7 @@
 #include "mmap.hpp"
+#include <vga.hpp>
+
+extern Vga term;
 
 void MMap::Sort() {
   for (int i = 1; i < m_infoSize; ++i) {
@@ -53,4 +56,16 @@ void MMap::Initialize(multiboot_tag_mmap *tag) {
   }
 
   Sort();
+
+  // Print MMAP
+  Print();
+}
+
+void MMap::Print() {
+  term.SetIntegerMode(Vga::IM_HEX);
+  for (int i = 0; i < m_infoSize; ++i) {
+    auto &info = m_info[i];
+    term << "[MMAP:" << i << "] T: " << info.type << " A: " << info.addr
+         << " L: " << info.length << term.endl;
+  }
 }

@@ -22,6 +22,11 @@ public:
     COLOR_WHITE = 15,
   };
 
+  enum IntegerMode {
+    IM_DEC = 10,
+    IM_HEX = 16,
+  };
+
   Vga();
   ~Vga();
 
@@ -32,8 +37,16 @@ public:
   void ClearLine();
   void ClearLine(uint8_t y);
   Vga &operator<<(const char *string);
-  Vga &operator<<(const int num);
-  Vga &operator<<(const unsigned int num);
+  Vga &operator<<(const char c);
+  Vga &operator<<(const int32_t num);
+  Vga &operator<<(const uint32_t num);
+  Vga &operator<<(const uint64_t num);
+
+  inline IntegerMode GetIntegerMode() { return m_intMode; }
+
+  inline void SetIntegerMode(IntegerMode mode) { m_intMode = mode; }
+
+  static constexpr char endl = '\n';
 
 private:
   static constexpr uint8_t MakeColor(const Color fg, const Color bg) {
@@ -52,4 +65,5 @@ private:
   uint8_t m_x;
   uint8_t m_y;
   uint8_t m_color;
+  IntegerMode m_intMode;
 };

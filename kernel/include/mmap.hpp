@@ -14,6 +14,7 @@ public:
 
 private:
   void Sort();
+  void Print();
 
   static constexpr uint8_t MEMORY_INFO_MAX = 16;
   MemoryInfo m_info[MEMORY_INFO_MAX];
