@@ -1,10 +1,11 @@
 #include <arch.hpp>
 #include <assert.hpp>
-#include <mmap.hpp>
 #include <multiboot.h>
 #include <stdint.h>
-#include <util.hpp>
 #include <vga.hpp>
+
+import mmap;
+import util;
 
 Vga term;
 Arch architecture;

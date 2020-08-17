@@ -1,6 +1,7 @@
-#include <string.hpp>
-#include <util.hpp>
 #include <vga.hpp>
+
+import string;
+import util;
 
 Vga::Vga()
     : m_x(0), m_y(0), m_color(MakeColor(COLOR_LIGHT_GREY, COLOR_BLACK)),
