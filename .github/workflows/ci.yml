@@ -1,16 +1,24 @@
 name: Build iso
 
-on:
-  push:
-    branches:
-      - master
+on: push
 
 jobs:
   build:
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        arch: [i386, x86_64]
     steps:
       - uses: actions/checkout@v2
+
       - name: Install dependencies
         run: sudo apt install xorriso expect mtools
+
       - name: Run Makefile
-        run: make all
+        run: make all ARCH=${{ matrix.arch }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ matrix.arch }}
+          path: benny.iso
