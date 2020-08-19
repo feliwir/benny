@@ -2,12 +2,12 @@
 ## An opensource Operating system
 
 ## Build state
-[![Build Status](https://travis-ci.org/feliwir/benny.svg?branch=master)](https://travis-ci.org/feliwir/benny)
+![Build status](https://github.com/feliwir/benny/workflows/Build%20iso/badge.svg?branch=master)
 
 ## Goals
 - Write a microkernel in modern C++
 - Use the clang compiler, because it doesn't require to build a cross compiler. It's a cross compiler by default
-- Use travis for automatic testing & deployment
+- Use Github Actions for automatic testing & deployment
 - Learn a lot about OS development ;)
 
 ## Supported architectures
