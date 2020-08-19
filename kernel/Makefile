@@ -27,7 +27,7 @@ kernel.bin: $(MODULES) $(OBJS) $(ARCHDIR)/linker.ld
 	$(CXX) -c $< -o $@ $(CPPFLAGS) -fprebuilt-module-path=./kernel
 
 %.o: %.asm
-	$(CC) -c $< -o $@ $(CFLAGS)
+	$(CC) -c $< -o $@ $(ASMFLAGS)
 
 .PHONY: clean
 clean:

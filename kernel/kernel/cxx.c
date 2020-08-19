@@ -39,7 +39,7 @@ int __cxa_atexit(void (*f)(void *), void *p, void *d) {
 }
 
 // just destroy all objects
-void __cxa_finalize(void *d) {
+void __cxa_finalize(__attribute__((unused)) void *d) {
   unsigned int i = iObject;
   for (; i > 0; --i) {
     --iObject;

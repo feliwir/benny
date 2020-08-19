@@ -23,8 +23,7 @@ export void *memset(void *ptr, int value, size_t num) {
   return ptr;
 }
 
-export template <class T> 
-inline void advancePtr(T *&ptr, const size_t bytes) {
+export template <class T> inline void advancePtr(T *&ptr, const size_t bytes) {
   uint8_t *bytePtr = reinterpret_cast<uint8_t *>(ptr);
   bytePtr += bytes;
   ptr = reinterpret_cast<T *>(bytePtr);
