@@ -1,0 +1,16 @@
+name: Build iso
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: sudo apt install xorriso expect
+      - name: Run Makefile
+        run: make all
