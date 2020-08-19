@@ -4,4 +4,3 @@ set send_slow { 1 0.001 }
 
 send -s "reboot\n"
 expect "eof"
-
