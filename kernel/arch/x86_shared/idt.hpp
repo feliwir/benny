@@ -41,10 +41,12 @@ class IDT {
 public:
   static void Initialize();
 
+  static void EmptyHandler(int index);
   static void AddHandler(int index, void (*func)(InterruptFrame *), int sel,
                          InterruptFlags flags);
   static void AddHandler(int index, void (*func)(InterruptFrame *, uintptr_t),
                          int sel, InterruptFlags flags);
+  static void AddInterruptHandler(int index, void (*func)(InterruptFrame *));
 
 private:
   static const uint32_t s_length = 256;

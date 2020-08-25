@@ -42,10 +42,15 @@ void processMultiboot(multiboot_tag *tag) {
 extern "C" void kernel_main(multiboot_tag *tag) {
   architecture.Initialize();
   term.Clear();
+  term << "Hello world!" << term.endl;
 
-  term << "Architecture: " << architecture.GetArchitecture() << term.endl;
+  // term << "Architecture: " << architecture.GetArchitecture() << term.endl;
 
-  processMultiboot(tag);
+  // processMultiboot(tag);
+
+  while (true) {
+    term << '-';
+  }
 
   asm volatile("hlt");
 }

@@ -1,124 +1,17 @@
 
 #include "idt.hpp"
+#include "cpu_exceptions.hpp"
 #include "gdt.hpp"
-#include <exception.hpp>
+#include "pic.hpp"
 
 InterruptDescriptor IDT::s_descriptors[IDT::s_length];
 
-__attribute__((interrupt)) void Exception_DivByZero(InterruptFrame *frame) {
-  Vga screen;
-  screen.Clear();
-  screen << "Fault: Divison by zero!"
-         << "\n";
-  DumpRegisters(screen, frame);
-  Panic(screen, "Cannot continue after fatal error!");
-}
+Vga screen;
 
-__attribute__((interrupt)) void Exception_Debug(InterruptFrame *frame) {
-  Vga screen;
-  screen.Clear();
-  screen << "Fault: Debug interrupt!\n";
-  DumpRegisters(screen, frame);
-}
+__attribute__((interrupt)) void TimerInterrupt(InterruptFrame *frame) {
+  // Do something
 
-__attribute__((interrupt)) void Exception_Breakpoint(InterruptFrame *frame) {
-  Vga screen;
-  screen.Clear();
-  screen << "Breakpoint triggered!\n";
-  DumpRegisters(screen, frame);
-}
-
-__attribute__((interrupt)) void Exception_Overflow(InterruptFrame *frame) {
-  Vga screen;
-  screen.Clear();
-  screen << "Trap: Overflow!\n";
-  DumpRegisters(screen, frame);
-}
-
-__attribute__((interrupt)) void Exception_OutOfBounds(InterruptFrame *frame) {
-  Vga screen;
-  screen.Clear();
-  screen << "Fault: Bound range exceeded!"
-         << "\n";
-  DumpRegisters(screen, frame);
-  Panic(screen, "Cannot continue after fatal error!");
-}
-
-__attribute__((interrupt)) void Exception_InvalidOp(InterruptFrame *frame) {
-  Vga screen;
-  screen.Clear();
-  screen << "Fault: Invalid opcode!"
-         << "\n";
-  DumpRegisters(screen, frame);
-  Panic(screen, "Cannot continue after fatal error!");
-}
-
-__attribute__((interrupt)) void Exception_DeviceNA(InterruptFrame *frame) {
-  Vga screen;
-  screen.Clear();
-  screen << "Fault: Device not available!"
-         << "\n";
-  DumpRegisters(screen, frame);
-  Panic(screen, "Cannot continue after fatal error!");
-}
-
-__attribute__((interrupt)) void Exception_DoubleFault(InterruptFrame *frame,
-                                                      uintptr_t err) {
-  Vga screen;
-  screen.Clear();
-  screen << "Double Fault! Code: " << static_cast<unsigned int>(err) << "\n";
-  DumpRegisters(screen, frame);
-  Panic(screen, "Cannot continue after fatal error!");
-}
-
-__attribute__((interrupt)) void Exception_InvalidTSS(InterruptFrame *frame,
-                                                     uintptr_t err) {
-  Vga screen;
-  screen.Clear();
-  screen << "Fault: Invalid TSS! Code: " << static_cast<unsigned int>(err)
-         << "\n";
-  DumpRegisters(screen, frame);
-  Panic(screen, "Cannot continue after fatal error!");
-}
-
-__attribute__((interrupt)) void Exception_SegNotPres(InterruptFrame *frame,
-                                                     uintptr_t err) {
-  Vga screen;
-  screen.Clear();
-  screen << "Fault: Present bit for segment not set! Code: "
-         << static_cast<unsigned int>(err) << "\n";
-  DumpRegisters(screen, frame);
-  Panic(screen, "Cannot continue after fatal error!");
-}
-
-__attribute__((interrupt)) void Exception_StackSeg(InterruptFrame *frame,
-                                                   uintptr_t err) {
-  Vga screen;
-  screen.Clear();
-  screen << "Fault: Stack segment fault! Code: "
-         << static_cast<unsigned int>(err) << "\n";
-  DumpRegisters(screen, frame);
-  Panic(screen, "Cannot continue after fatal error!");
-}
-
-__attribute__((interrupt)) void Exception_GenProtFault(InterruptFrame *frame,
-                                                       uintptr_t err) {
-  Vga screen;
-  screen.Clear();
-  screen << "Fault: General protection fault! Code: "
-         << static_cast<unsigned int>(err) << "\n";
-  DumpRegisters(screen, frame);
-  Panic(screen, "Cannot continue after fatal error!");
-}
-
-__attribute__((interrupt)) void Exception_PageFault(InterruptFrame *frame,
-                                                    uintptr_t err) {
-  Vga screen;
-  screen.Clear();
-  screen << "Fault: Page fault! Code: " << static_cast<unsigned int>(err)
-         << "\n";
-  DumpRegisters(screen, frame);
-  Panic(screen, "Cannot continue after fatal error!");
+  PIC::NotifyEndOfInterrupt((int)HardwareInterrupts::Timer);
 }
 
 void IDT::Initialize() {
@@ -126,6 +19,7 @@ void IDT::Initialize() {
                   {SEG_INTERRUPT_GATE, 0, 0, 1});
   IDT::AddHandler(1, &Exception_Debug, CODE_SELECTOR,
                   {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::EmptyHandler(2);
   IDT::AddHandler(3, &Exception_Breakpoint, CODE_SELECTOR,
                   {SEG_INTERRUPT_GATE, 0, 0, 1});
   IDT::AddHandler(4, &Exception_Overflow, CODE_SELECTOR,
@@ -138,6 +32,7 @@ void IDT::Initialize() {
                   {SEG_INTERRUPT_GATE, 0, 0, 1});
   IDT::AddHandler(8, &Exception_DoubleFault, CODE_SELECTOR,
                   {SEG_INTERRUPT_GATE, 0, 0, 1});
+  IDT::EmptyHandler(9);
   IDT::AddHandler(10, &Exception_InvalidTSS, CODE_SELECTOR,
                   {SEG_INTERRUPT_GATE, 0, 0, 1});
   IDT::AddHandler(11, &Exception_SegNotPres, CODE_SELECTOR,
@@ -148,6 +43,11 @@ void IDT::Initialize() {
                   {SEG_INTERRUPT_GATE, 0, 0, 1});
   IDT::AddHandler(14, &Exception_PageFault, CODE_SELECTOR,
                   {SEG_INTERRUPT_GATE, 0, 0, 1});
+  for (uint16_t i = 15; i < 32; i++) {
+    IDT::EmptyHandler(i);
+  }
+
+  IDT::AddInterruptHandler((int)HardwareInterrupts::Timer, &TimerInterrupt);
 
   struct {
     uint16_t limit;
@@ -158,6 +58,21 @@ void IDT::Initialize() {
   };
 
   asm volatile("lidt %0" : : "m"(idtp));
+}
+
+void IDT::EmptyHandler(int index) {
+  auto &d = IDT::s_descriptors[index];
+  d.offset_1 = 0;
+  d.offset_2 = 0;
+#ifdef _x86_64_
+  d.offset_3 = 0;
+  d.reserved2 = 0;
+#endif
+  d.selector = 0;
+  d.flags = {SEG_INTERRUPT_GATE, 0, 0, 0};
+  // other fields
+  d.reserved = 0;
+  d.ist_index = 0;
 }
 
 void IDT::AddHandler(int index, void (*func)(InterruptFrame *), int sel,
@@ -192,4 +107,8 @@ void IDT::AddHandler(int index, void (*func)(InterruptFrame *, uintptr_t),
   // other fields
   d.reserved = 0;
   d.ist_index = 0;
+}
+
+void IDT::AddInterruptHandler(int index, void (*func)(InterruptFrame *)) {
+  AddHandler(index, func, CODE_SELECTOR, {SEG_INTERRUPT_GATE, 0, 0, 1});
 }
