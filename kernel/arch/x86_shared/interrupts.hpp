@@ -20,7 +20,6 @@ inline void enable_interrupts() {
 
 template <class T, typename... F>
 inline void without_interrupts(T lambda, F &&... args) {
-
   disable_interrupts();
   lambda(args...);
   enable_interrupts();

@@ -1,7 +1,8 @@
 #pragma once
+#include <lock.hpp>
 #include <stdint.h>
 
-class Vga {
+class Vga final {
 public:
   enum Color {
     COLOR_BLACK = 0,
@@ -62,6 +63,7 @@ private:
   static constexpr uintptr_t VGA_MEM = 0xB8000;
   static constexpr uint8_t VGA_WIDTH = 80;
   static constexpr uint8_t VGA_HEIGHT = 25;
+  static TicketLock s_lock;
   uint8_t m_x;
   uint8_t m_y;
   uint8_t m_color;

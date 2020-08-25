@@ -4,6 +4,8 @@
 import string;
 import util;
 
+TicketLock Vga::s_lock;
+
 Vga::Vga()
     : m_x(0), m_y(0), m_color(MakeColor(COLOR_LIGHT_GREY, COLOR_BLACK)),
       m_intMode(IM_DEC) {}
@@ -11,6 +13,7 @@ Vga::Vga()
 Vga::~Vga() {}
 
 void Vga::Clear() {
+  s_lock.Lock();
   without_interrupts([&] {
     uint16_t *buffer = reinterpret_cast<uint16_t *>(VGA_MEM);
 
@@ -21,25 +24,30 @@ void Vga::Clear() {
       }
     }
   });
+  s_lock.Unlock();
 }
 
 void Vga::PutChar(const char c, const uint8_t x, const uint8_t y) {
+  s_lock.Lock();
   without_interrupts([&] {
     const uint16_t index = y * VGA_WIDTH + x;
     uint16_t *buffer = reinterpret_cast<uint16_t *>(VGA_MEM);
     buffer[index] = MakeEntry(c, m_color);
   });
+  s_lock.Unlock();
 }
 
 void Vga::ClearLine() { ClearLine(m_y); }
 
 void Vga::ClearLine(uint8_t y) {
+  s_lock.Lock();
   without_interrupts([this, &y] {
     uint16_t *buffer = reinterpret_cast<uint16_t *>(VGA_MEM);
     for (uint8_t x = 0; x < VGA_WIDTH; ++x) {
       buffer[y * VGA_WIDTH + x] = MakeEntry(' ', m_color);
     }
   });
+  s_lock.Unlock();
 }
 
 Vga &Vga::operator<<(const char *string) {
@@ -63,6 +71,10 @@ Vga &Vga::operator<<(const char c) {
     } else {
       PutChar(c, m_x, m_y);
       ++m_x;
+      if (m_x == VGA_WIDTH) {
+        m_y++;
+        m_x = 0;
+      }
     }
   });
 

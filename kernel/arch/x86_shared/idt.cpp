@@ -8,8 +8,10 @@ InterruptDescriptor IDT::s_descriptors[IDT::s_length];
 
 Vga screen;
 
-__attribute__((interrupt)) void TimerInterrupt(InterruptFrame *frame) {
+__attribute__((interrupt)) void TimerInterrupt(__attribute__((unused))
+                                               InterruptFrame *frame) {
   // Do something
+  screen << '.';
 
   PIC::NotifyEndOfInterrupt((int)HardwareInterrupts::Timer);
 }

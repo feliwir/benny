@@ -43,13 +43,13 @@ extern "C" void kernel_main(multiboot_tag *tag) {
   architecture.Initialize();
   term.Clear();
   term << "Hello world!" << term.endl;
-
-  // term << "Architecture: " << architecture.GetArchitecture() << term.endl;
-
-  // processMultiboot(tag);
+  term << "Architecture: " << architecture.GetArchitecture() << term.endl;
+  processMultiboot(tag);
 
   while (true) {
-    term << '-';
+    for (int i = 0; i < 1000000; i++)
+      asm volatile("pause");
+    term << '#';
   }
 
   asm volatile("hlt");

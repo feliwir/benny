@@ -2,7 +2,7 @@
 
 class Vga;
 
-class Arch {
+class Arch final {
 public:
   void Initialize();
   inline const char *GetArchitecture() const { return m_archStr; }
