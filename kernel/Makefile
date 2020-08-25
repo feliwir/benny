@@ -15,7 +15,7 @@ kernel/cxx.o
 all: kernel.bin
 
 kernel.bin: $(MODULES) $(OBJS) $(ARCHDIR)/linker.ld
-	$(CC) -T $(ARCHDIR)/linker.ld $(CFLAGS) -o $@ $(OBJS) $(LDFLAGS)
+	$(CC) -fuse-ld=lld -Wl,-T $(ARCHDIR)/linker.ld $(CFLAGS) -o $@ $(OBJS) $(LDFLAGS)
 
 %.pcm: %.cpp
 	$(CXX) -c $< -o $@ -Xclang -emit-module-interface $(CPPFLAGS)

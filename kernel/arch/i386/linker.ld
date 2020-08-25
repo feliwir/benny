@@ -4,33 +4,33 @@ OUTPUT_ARCH(i386:i386)
 
 SECTIONS
 {
-	. = 1M;
+    . = 1M;
 
-	.text BLOCK(4K) : ALIGN(4K)
+    .text : ALIGN(4K)
     {
-		*(.multiboot)
+        *(.multiboot)
         *(.text)
     }
 
-	/* Read-write data (initialized) */
-	.data BLOCK(4K) : ALIGN(4K)
-	{
-		start_ctors = .;
-		KEEP(*(.ctors));
-		KEEP(*(SORT_BY_INIT_PRIORITY(.ctors.*)));
-		end_ctors = .;
-		*(.data)
-	}
+    /* Read-write data (initialized) */
+    .data : ALIGN(4K)
+    {
+        start_ctors = .;
+        KEEP(*(.ctors));
+        KEEP(*(SORT_BY_INIT_PRIORITY(.ctors.*)));
+        end_ctors = .;
+        *(.data)
+    }
 
-	.rodata BLOCK(4K) : ALIGN(4K)
-	{
-		*(.rodata)
-	}
+    .rodata : ALIGN(4K)
+    {
+        *(.rodata)
+    }
 
-	.bss BLOCK(4K) : ALIGN(4K)
-	{
-		*(COMMON)
-		*(.bss)
-		*(.bootstrap_stack)
-	}
+    .bss : ALIGN(4K)
+    {
+        *(COMMON)
+        *(.bss)
+        *(.bootstrap_stack)
+    }
 }
