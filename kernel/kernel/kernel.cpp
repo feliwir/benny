@@ -1,5 +1,6 @@
 #include <arch.hpp>
 #include <assert.hpp>
+#include <emmintrin.h>
 #include <multiboot.h>
 #include <stdint.h>
 #include <vga.hpp>
@@ -47,7 +48,7 @@ extern "C" void kernel_main(multiboot_tag *tag) {
 
   while (true) {
     for (int i = 0; i < 1000000; i++)
-      asm volatile("pause");
+      _mm_pause();
     term << '#';
   }
 

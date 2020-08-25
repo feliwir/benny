@@ -1,4 +1,5 @@
 #include "interrupts.hpp"
+#include <lock_guard.hpp>
 #include <vga.hpp>
 
 import string;
@@ -9,7 +10,7 @@ TicketLock Vga::s_lock;
 Vga::Vga() : m_color(MakeColor(COLOR_LIGHT_GREY, COLOR_BLACK)) {}
 
 void Vga::Clear() {
-  s_lock.Lock();
+  TicketLockGuard(s_lock);
   without_interrupts([&] {
     auto *buffer = reinterpret_cast<uint16_t *>(VGA_MEM);
 
@@ -20,30 +21,27 @@ void Vga::Clear() {
       }
     }
   });
-  s_lock.Unlock();
 }
 
 void Vga::PutChar(const char c, const uint8_t x, const uint8_t y) {
-  s_lock.Lock();
+  TicketLockGuard(s_lock);
   without_interrupts([&] {
     const uint16_t index = y * VGA_WIDTH + x;
     auto *buffer = reinterpret_cast<uint16_t *>(VGA_MEM);
     buffer[index] = MakeEntry(c, m_color);
   });
-  s_lock.Unlock();
 }
 
 void Vga::ClearLine() { ClearLine(m_y); }
 
 void Vga::ClearLine(uint8_t y) {
-  s_lock.Lock();
+  TicketLockGuard(s_lock);
   without_interrupts([this, &y] {
     auto *buffer = reinterpret_cast<uint16_t *>(VGA_MEM);
     for (uint8_t x = 0; x < VGA_WIDTH; ++x) {
       buffer[y * VGA_WIDTH + x] = MakeEntry(' ', m_color);
     }
   });
-  s_lock.Unlock();
 }
 
 Vga &Vga::operator<<(const char *string) {
