@@ -2,30 +2,15 @@
 #include "idt.hpp"
 #include "cpu_exceptions.hpp"
 #include "gdt.hpp"
-#include "pic.hpp"
 #include "io.hpp"
+#include "keyboard.hpp"
+#include "pic.hpp"
+#include "timer.hpp"
 
 InterruptDescriptor IDT::s_descriptors[IDT::s_length];
 
-Vga screen;
-
-__attribute__((interrupt)) void TimerInterrupt(__attribute__((unused))
-                                               InterruptFrame *frame) {
-  // Do something
-
-  PIC::NotifyEndOfInterrupt((int)HardwareInterrupts::Timer);
-}
-
-__attribute__((interrupt)) void KeyboardInterrupt(__attribute__((unused))
-                                               InterruptFrame *frame) {
-  // Read the scancode
-  uint8_t scancode = inb(0x60);
-  screen << scancode;
-
-  PIC::NotifyEndOfInterrupt((int)HardwareInterrupts::Keyboard);
-}
-
 void IDT::Initialize() {
+  // CPU Exceptions
   IDT::AddHandler(0, &Exception_DivByZero, CODE_SELECTOR,
                   {SEG_INTERRUPT_GATE, 0, 0, 1});
   IDT::AddHandler(1, &Exception_Debug, CODE_SELECTOR,
@@ -58,8 +43,10 @@ void IDT::Initialize() {
     IDT::EmptyHandler(i);
   }
 
+  // Hardware interrupts
   IDT::AddInterruptHandler((int)HardwareInterrupts::Timer, &TimerInterrupt);
-  IDT::AddInterruptHandler((int)HardwareInterrupts::Keyboard, &KeyboardInterrupt);
+  IDT::AddInterruptHandler((int)HardwareInterrupts::Keyboard,
+                           &KeyboardInterrupt);
 
   struct {
     uint16_t limit;

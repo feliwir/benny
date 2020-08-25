@@ -49,5 +49,4 @@ extern "C" void kernel_main(multiboot_tag *tag) {
   while (true) {
     asm volatile("hlt");
   }
-
 }

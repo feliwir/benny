@@ -140,6 +140,10 @@ void Vga::Write(const char *string) {
       } else {
         PutChar(*string, m_x, m_y);
         ++m_x;
+        if (m_x == VGA_WIDTH) {
+          m_y++;
+          m_x = 0;
+        }
       }
       ++string;
     }
