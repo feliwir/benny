@@ -1,4 +1,4 @@
 #!/bin/bash
 make clean
-bear make
-run-clang-tidy -header-filter='.*' -checks='-*,modernize-*'
+bear --include kernel --use-only --use-c++ clang++ make
+run-clang-tidy -header-filter='.*' -checks='-*,modernize-*,performance-*' -fix
