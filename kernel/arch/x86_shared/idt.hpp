@@ -39,6 +39,7 @@ static_assert(sizeof(InterruptDescriptor) == 8,
 
 class IDT {
 public:
+  IDT() = delete;
   static void Initialize();
 
   static void EmptyHandler(int index);
@@ -51,5 +52,4 @@ public:
 private:
   static const uint32_t s_length = 256;
   static InterruptDescriptor s_descriptors[s_length];
-  IDT() = delete;
 };

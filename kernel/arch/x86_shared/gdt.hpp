@@ -47,17 +47,15 @@ constexpr const uint16_t SEG_INTERRUPT_GATE = 0xE; ///< 64 bits Interrupt Gate
 constexpr const uint16_t SEG_TRAP_GATE = 0xE;      ///< 64 bits Trap  Gate
 
 struct SegmentDescriptor {
-  uint16_t limit0;
-  uint16_t base0;
-  uint8_t base1;
-  uint8_t access;
-  uint8_t limit1 : 4;
-  uint8_t flags0 : 4;
-  uint8_t base2;
+  uint16_t limit0{0};
+  uint16_t base0{0};
+  uint8_t base1{0};
+  uint8_t access{SA_NONE};
+  uint8_t limit1 : 4 {0};
+  uint8_t flags0 : 4 {0};
+  uint8_t base2{0};
 
-  constexpr SegmentDescriptor()
-      : limit0(0), base0(0), base1(0), access(SA_NONE), limit1(0), flags0(0),
-        base2(0) {}
+  constexpr SegmentDescriptor() = default;
 
   constexpr SegmentDescriptor(uint32_t base, uint32_t length, uint8_t acc,
                               uint8_t flags)
@@ -75,6 +73,7 @@ static_assert(sizeof(SegmentDescriptor) == 8,
 
 class GDT {
 public:
+  GDT() = delete;
   static void Initialize();
 
   static const SegmentDescriptor &Descriptor(const uint32_t index);
@@ -83,5 +82,4 @@ public:
 private:
   static const uint32_t s_length = 8;
   static SegmentDescriptor s_descriptors[s_length];
-  GDT() = delete;
 };

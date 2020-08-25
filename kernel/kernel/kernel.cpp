@@ -22,8 +22,7 @@ void processMultiboot(multiboot_tag *tag) {
     switch (tag->type) {
     case MULTIBOOT_TAG_TYPE_MMAP: // Memory map
     {
-      multiboot_tag_mmap *tag_mmap =
-          reinterpret_cast<multiboot_tag_mmap *>(tag);
+      auto *tag_mmap = reinterpret_cast<multiboot_tag_mmap *>(tag);
       term << "Found memory map tag!" << term.endl;
       memoryMap.Initialize(tag_mmap);
     } break;

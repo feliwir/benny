@@ -19,7 +19,7 @@ struct PicChip {
   const uint8_t offset;
   const uint8_t chaining;
 
-  inline bool HandlesInterupt(uint8_t id) const {
+  [[nodiscard]] inline bool HandlesInterupt(uint8_t id) const {
     return offset <= id && id < offset + 8;
   }
 

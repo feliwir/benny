@@ -79,7 +79,7 @@ void IDT::EmptyHandler(int index) {
 
 void IDT::AddHandler(int index, void (*func)(InterruptFrame *), int sel,
                      InterruptFlags f) {
-  uintptr_t addr = reinterpret_cast<uintptr_t>(func);
+  auto addr = reinterpret_cast<uintptr_t>(func);
   auto &d = IDT::s_descriptors[index];
   d.offset_1 = (addr & 0xFFFF);
   d.offset_2 = (addr >> 16) & 0xFFFF;
@@ -96,7 +96,7 @@ void IDT::AddHandler(int index, void (*func)(InterruptFrame *), int sel,
 
 void IDT::AddHandler(int index, void (*func)(InterruptFrame *, uintptr_t),
                      int sel, InterruptFlags f) {
-  uintptr_t addr = reinterpret_cast<uintptr_t>(func);
+  auto addr = reinterpret_cast<uintptr_t>(func);
   auto &d = IDT::s_descriptors[index];
   d.offset_1 = (addr & 0xFFFF);
   d.offset_2 = (addr >> 16) & 0xFFFF;

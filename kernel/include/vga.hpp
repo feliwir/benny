@@ -29,7 +29,6 @@ public:
   };
 
   Vga();
-  ~Vga();
 
   void Clear();
   void Write(const char *string);
@@ -64,8 +63,8 @@ private:
   static constexpr uint8_t VGA_WIDTH = 80;
   static constexpr uint8_t VGA_HEIGHT = 25;
   static TicketLock s_lock;
-  uint8_t m_x;
-  uint8_t m_y;
+  uint8_t m_x{0};
+  uint8_t m_y{0};
   uint8_t m_color;
-  IntegerMode m_intMode;
+  IntegerMode m_intMode{IM_DEC};
 };
