@@ -11,6 +11,7 @@ constexpr uint8_t PIC_2_DATA = 0xA1;
 
 enum class HardwareInterrupts {
   Timer = PIC_1_OFFSET,
+  Keyboard,
 };
 
 struct PicChip {

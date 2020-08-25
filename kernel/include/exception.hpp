@@ -23,5 +23,7 @@ void DumpRegisters(Vga &screen, InterruptFrame *frame) {
 
 void Panic(Vga &screen, const char *message) {
   screen << message;
-  asm volatile("hlt");
+  while (true) {
+    asm volatile("hlt");
+  }
 }

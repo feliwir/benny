@@ -47,10 +47,7 @@ extern "C" void kernel_main(multiboot_tag *tag) {
   processMultiboot(tag);
 
   while (true) {
-    for (int i = 0; i < 1000000; i++)
-      _mm_pause();
-    term << '#';
+    asm volatile("hlt");
   }
 
-  asm volatile("hlt");
 }
