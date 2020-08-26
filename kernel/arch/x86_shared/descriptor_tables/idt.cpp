@@ -1,11 +1,11 @@
 
 #include "idt.hpp"
-#include "cpu_exceptions.hpp"
+#include "../drivers/keyboard.hpp"
+#include "../drivers/pic.hpp"
+#include "../drivers/timer.hpp"
+#include "../exceptions/cpu_exceptions.hpp"
+#include "../util/io.hpp"
 #include "gdt.hpp"
-#include "io.hpp"
-#include "keyboard.hpp"
-#include "pic.hpp"
-#include "timer.hpp"
 
 InterruptDescriptor IDT::s_descriptors[IDT::s_length];
 

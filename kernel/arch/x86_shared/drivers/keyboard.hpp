@@ -1,5 +1,5 @@
 #pragma once
-#include "interrupts.hpp"
+#include "../util/interrupts.hpp"
 
 __attribute__((interrupt)) void KeyboardInterrupt(InterruptFrame *frame);
 

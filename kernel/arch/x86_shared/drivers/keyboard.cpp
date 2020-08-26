@@ -1,7 +1,7 @@
 #include "keyboard.hpp"
-#include "io.hpp"
-#include "pic.hpp"
-#include "vga.hpp"
+#include "../drivers/pic.hpp"
+#include "../util/io.hpp"
+#include <vga.hpp>
 
 Vga screen;
 

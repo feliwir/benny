@@ -1,6 +1,6 @@
-#include "gdt.hpp"
-#include "idt.hpp"
-#include "pic.hpp"
+#include "descriptor_tables/gdt.hpp"
+#include "descriptor_tables/idt.hpp"
+#include "drivers/pic.hpp"
 #include <arch.hpp>
 #include <vga.hpp>
 

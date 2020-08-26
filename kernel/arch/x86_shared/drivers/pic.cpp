@@ -1,7 +1,6 @@
 #include "pic.hpp"
-#include "idt.hpp"
-#include "interrupts.hpp"
-#include "io.hpp"
+#include "../util/interrupts.hpp"
+#include "../util/io.hpp"
 #include "vga.hpp"
 
 /// Command sent to begin PIC initialization.

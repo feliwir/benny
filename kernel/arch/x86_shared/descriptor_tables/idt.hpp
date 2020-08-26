@@ -1,5 +1,5 @@
 #pragma once
-#include "interrupts.hpp"
+#include "../util/interrupts.hpp"
 
 #ifdef _x86_64_
 static_assert(sizeof(InterruptDescriptor) == 16,
