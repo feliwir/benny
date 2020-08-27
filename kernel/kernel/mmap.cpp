@@ -54,9 +54,15 @@ public:
     }
 
     Sort();
+  }
 
-    // Print MMAP
-    Print();
+  void Print() {
+    term.SetIntegerMode(Vga::IM_HEX);
+    for (int i = 0; i < m_infoSize; ++i) {
+      auto &info = m_info[i];
+      term << "[MMAP:" << i << "] T: " << info.type << " A: " << info.addr
+           << " L: " << info.length << term.endl;
+    }
   }
 
   struct MemoryInfo {
@@ -73,15 +79,6 @@ private:
         m_info[k] = m_info[i];
         m_info[i] = temp;
       }
-    }
-  }
-
-  void Print() {
-    term.SetIntegerMode(Vga::IM_HEX);
-    for (int i = 0; i < m_infoSize; ++i) {
-      auto &info = m_info[i];
-      term << "[MMAP:" << i << "] T: " << info.type << " A: " << info.addr
-           << " L: " << info.length << term.endl;
     }
   }
 

@@ -33,4 +33,7 @@ SECTIONS
         *(.bss)
         *(.bootstrap_stack)
     }
+
+    /* Define a symbol that we can use to get the end of kernel code */
+    end = .;
 }
