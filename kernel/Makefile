@@ -2,12 +2,12 @@ include make.config
 include $(ARCHDIR)/make.config
 
 MODULES:=\
-kernel/string.pcm \
-kernel/util.pcm
 
 OBJS:=\
 $(ARCH_OBJS) \
 kernel/kernel.o \
+kernel/string.o \
+kernel/util.o \
 kernel/mmap.o \
 kernel/cxx.o
 

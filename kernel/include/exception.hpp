@@ -1,6 +1,6 @@
 #pragma once
+#include "util/string.hpp"
 #include "vga.hpp"
-import string;
 // some util funcs we need for exceptions
 
 void DumpRegisters(Vga &screen, InterruptFrame *frame) {

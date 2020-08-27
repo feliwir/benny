@@ -4,9 +4,8 @@
 #include <multiboot.h>
 #include <stdint.h>
 #include <util/assert.hpp>
+#include <util/util.hpp>
 #include <vga.hpp>
-
-import util;
 
 Arch architecture;
 MMap memoryMap;
@@ -22,8 +21,9 @@ void processMultiboot(multiboot_tag *tag) {
       memoryMap.Initialize(tag_mmap);
     } break;
     case MULTIBOOT_TAG_TYPE_BASIC_MEMINFO:
-      //TODO:
-      //auto *tag_meminfo = reinterpret_cast<multiboot_tag_basic_meminfo *>(tag);
+      // TODO:
+      // auto *tag_meminfo = reinterpret_cast<multiboot_tag_basic_meminfo
+      // *>(tag);
       break;
     }
     auto next =

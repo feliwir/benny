@@ -1,9 +1,7 @@
-module;
-#include <stddef.h>
 #include <stdint.h>
-export module string;
+#include <util/string.hpp>
 
-export size_t strlen(const char *str) {
+size_t strlen(const char *str) {
   size_t i = 0;
   while (str[i]) {
     ++i;
@@ -12,7 +10,7 @@ export size_t strlen(const char *str) {
   return i;
 }
 
-export char *itoa(int value, char *str, int base) {
+char *itoa(int value, char *str, int base) {
   char *rc;
   char *ptr;
   char *low;
@@ -47,7 +45,7 @@ export char *itoa(int value, char *str, int base) {
   return rc;
 }
 
-export char *ltoa(long value, char *str, int base) {
+char *ltoa(long value, char *str, int base) {
   char *rc;
   char *ptr;
   char *low;
@@ -82,7 +80,7 @@ export char *ltoa(long value, char *str, int base) {
   return rc;
 }
 
-export char *utoa(unsigned int value, char *str, int base) {
+char *utoa(unsigned int value, char *str, int base) {
   char *rc;
   char *ptr;
   char *low;
@@ -114,7 +112,7 @@ export char *utoa(unsigned int value, char *str, int base) {
   return rc;
 }
 
-export char *ultoa(unsigned long value, char *str, int base) {
+char *ultoa(unsigned long value, char *str, int base) {
   char *rc;
   char *ptr;
   char *low;

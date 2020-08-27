@@ -2,12 +2,14 @@
 #include "paging.hpp"
 #include "vga.hpp"
 #include <mem/mmap.hpp>
+#include <scheduler/lock_guard.hpp>
 #include <util/math.hpp>
-import util;
+#include <util/util.hpp>
 
 Bitmap PMM::bitmap;
 uintptr_t PMM::highestPage = 0;
 TicketLock PMM::s_lock;
+uintptr_t PMM::s_lastUsedIndex = 0;
 
 // Defined in linker.ld, indicate the end of kernel code/data
 extern uint32_t end;
@@ -69,15 +71,46 @@ void PMM::Initialize(MMap &mmap) {
   }
 }
 
-uint32_t PMM::AllocateBlock() {
-  uint32_t free_block = FirstFreeBlock();
-  return free_block;
+void *PMM::InnerAlloc(uintptr_t count, uintptr_t limit) {
+  uintptr_t p = 0;
+
+  while (s_lastUsedIndex < limit) {
+    if (!bitmap.IsSet(s_lastUsedIndex)) {
+      if (++p == count) {
+        uintptr_t page = s_lastUsedIndex - count;
+        for (uintptr_t i = page; i < s_lastUsedIndex; i++) {
+          bitmap.Set(i);
+        }
+        return (void *)(page * PAGE_SIZE);
+      }
+    }
+  }
+
+  return nullptr;
 }
 
-void PMM::FreeBlock(uint32_t blockNumber) {}
+void *PMM::Alloc(uintptr_t count) {
+  TicketLockGuard(s_lock);
+  uintptr_t l = s_lastUsedIndex;
+  void *ret = InnerAlloc(count, highestPage / PAGE_SIZE);
 
-uint32_t PMM::FirstFreeBlock() {
-  uint32_t i;
+  if (ret == nullptr) {
+    // reset our last used index
+    s_lastUsedIndex = 0;
+    ret = InnerAlloc(count, l);
+  }
 
-  return (uint32_t)-1;
+  return ret;
+}
+
+void *PMM::AllocZ(uintptr_t count) {
+  void *ret = Alloc(count);
+
+  if (ret == nullptr) {
+    return nullptr;
+  }
+
+  memset(ret, 0, PAGE_SIZE);
+
+  return ret;
 }

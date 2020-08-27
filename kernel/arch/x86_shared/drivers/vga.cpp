@@ -1,9 +1,8 @@
 #include "../util/interrupts.hpp"
 #include <scheduler/lock_guard.hpp>
+#include <util/string.hpp>
+#include <util/util.hpp>
 #include <vga.hpp>
-
-import string;
-import util;
 
 TicketLock Vga::s_lock;
 
