@@ -1,5 +1,5 @@
 #pragma once
-#include <lock.hpp>
+#include <scheduler/lock.hpp>
 #include <stdint.h>
 
 class Vga final {
@@ -42,8 +42,7 @@ public:
   Vga &operator<<(const uint32_t num);
   Vga &operator<<(const uint64_t num);
 
-  inline IntegerMode GetIntegerMode() { return m_intMode; }
-
+  [[nodiscard]] inline IntegerMode GetIntegerMode() const { return m_intMode; }
   inline void SetIntegerMode(IntegerMode mode) { m_intMode = mode; }
 
   static constexpr char endl = '\n';

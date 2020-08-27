@@ -1,5 +1,5 @@
-#include "lock.hpp"
 #include <emmintrin.h>
+#include <scheduler/lock.hpp>
 
 void TicketLock::Lock() {
   size_t ticket =

@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-constexpr uint16_t PAGE_SIZE = 4096;
+constexpr uintptr_t PAGE_SIZE = 4096;
 
 // Alignment related macro
 #define IS_ALIGN(addr) ((((uint32_t)(addr)) | 0xFFFFF000) == 0)
@@ -63,7 +63,7 @@ struct PageDirectory {
 } __attribute__((packed));
 
 // Defined in paging.c
-PageDirectory kpage_dir;
+// PageDirectory kpage_dir;
 
 class Paging {
 public:
@@ -94,6 +94,6 @@ public:
                              PageDirectory *dst_page_dir, uint32_t page_dir_idx,
                              PageTable *src);
 
-  private:
-  uint8_t * tempMem;
+private:
+  uint8_t *tempMem;
 };

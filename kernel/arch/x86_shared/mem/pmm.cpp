@@ -1,81 +1,83 @@
 #include "pmm.hpp"
+#include "paging.hpp"
 #include "vga.hpp"
+#include <mem/mmap.hpp>
+#include <util/math.hpp>
 import util;
-import mmap;
 
-uint8_t* PMM::bitmap = (uint8_t *)(&end);
-uint32_t PMM::totalBlocks;
-uint32_t PMM::bitmapSize;
-uint8_t *PMM::memStart;
+Bitmap PMM::bitmap;
+uintptr_t PMM::highestPage = 0;
+TicketLock PMM::s_lock;
 
-uintptr_t memSize;
+// Defined in linker.ld, indicate the end of kernel code/data
+extern uint32_t end;
 
-MMap memoryMap;
-Vga term;
+void PMM::Initialize(MMap &mmap) {
+  Vga term;
+  term.Clear();
 
-void processMultiboot(multiboot_tag *tag) {
-  uint32_t total_size = tag->type;
-  term << "Total tags size: " << total_size << term.endl;
-  advancePtr(tag, MULTIBOOT_TAG_ALIGN);
+  mmap.Print(term);
 
-  term << (int)sizeof(multiboot_tag) << term.endl;
+  uintptr_t usableMemory = mmap.UsableMemory();
 
-  while (tag->type != MULTIBOOT_TAG_TYPE_END) {
-    switch (tag->type) {
-    case MULTIBOOT_TAG_TYPE_MMAP: // Memory map
-    {
-      auto *tag_mmap = reinterpret_cast<multiboot_tag_mmap *>(tag);
-      term << "Found memory map tag!" << term.endl;
-      memoryMap.Initialize(tag_mmap);
-    } break;
-    case MULTIBOOT_TAG_TYPE_BASIC_MEMINFO:
-      auto *tag_meminfo = reinterpret_cast<multiboot_tag_basic_meminfo *>(tag);
-      memSize = tag_meminfo->mem_upper;
-      term << "Found basic memory info!" << term.endl;
-      break;
-    }
-    auto next =
-        ((tag->size + MULTIBOOT_TAG_ALIGN - 1) & ~(MULTIBOOT_TAG_ALIGN - 1));
-    advancePtr(tag, next);
+  term << "Total memory: " << usableMemory;
+
+  // First, calculate how big the bitmap needs to be.
+  for (size_t i = 0; i < mmap.GetNumInfos(); i++) {
+    auto info = mmap.GetInfo(i);
+    if (info.type != MULTIBOOT_MEMORY_AVAILABLE)
+      continue;
+
+    uintptr_t top = info.addr + info.length;
+
+    if (top > highestPage)
+      highestPage = top;
   }
 
-  term << "Done processing tags!" << term.endl;
-}
+  size_t bitmap_size = div_roundup(highestPage, PAGE_SIZE) / 8;
 
-void PMM::Initialize(multiboot_tag* bootInfo) {
-  term.Clear();
-  processMultiboot(bootInfo);
+  // Second, find a location with enough free pages to host the bitmap.
+  for (size_t i = 0; i < mmap.GetNumInfos(); i++) {
+    auto info = mmap.GetInfo(i);
+    if (info.type != MULTIBOOT_MEMORY_AVAILABLE)
+      continue;
 
-  memoryMap.Print();
+    if (info.length >= bitmap_size) {
+      auto *bitmap_addr = (uint8_t *)(info.addr + 0);
 
-  totalBlocks = 8096 / BLOCK_SIZE;
+      // Initialise entire bitmap to 1 (non-free)
+      memset(bitmap_addr, 0xff, bitmap_size);
 
-  // For the given memory size, how many bytes is needed for the bitmap?
-  // (mem_size nees to be multiple of BLOCK_SIZE = 4096)
-  bitmapSize = totalBlocks / BLOCKS_PER_BUCKET;
-  if (bitmapSize * BLOCKS_PER_BUCKET < totalBlocks)
-    bitmapSize++;
+      bitmap.SetData(bitmap_addr);
 
-  // Clear bitmap
-  memset(bitmap, 0, bitmapSize);
+      info.length -= bitmap_size;
+      info.addr += bitmap_size;
 
-  // Start of all blcoks
-  memStart = (uint8_t *)BLOCK_ALIGN(((uintptr_t)(bitmap + bitmapSize)));
+      break;
+    }
+
+    // Third, populate free bitmap entries according to memory map.
+    for (size_t i = 0; i < mmap.GetNumInfos(); i++) {
+      auto info = mmap.GetInfo(i);
+
+      if (info.type != MULTIBOOT_MEMORY_AVAILABLE)
+        continue;
+
+      for (uintptr_t j = 0; j < info.length; j += PAGE_SIZE)
+        bitmap.Unset((info.addr + j) / PAGE_SIZE);
+    }
+  }
 }
 
 uint32_t PMM::AllocateBlock() {
   uint32_t free_block = FirstFreeBlock();
-  SETBIT(free_block);
   return free_block;
 }
 
-void PMM::FreeBlock(uint32_t blockNumber) { CLEARBIT(blockNumber); }
+void PMM::FreeBlock(uint32_t blockNumber) {}
 
 uint32_t PMM::FirstFreeBlock() {
   uint32_t i;
-  for (i = 0; i < totalBlocks; i++) {
-    if (!ISSET(i))
-      return i;
-  }
+
   return (uint32_t)-1;
 }

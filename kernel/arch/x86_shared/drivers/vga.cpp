@@ -1,5 +1,5 @@
 #include "../util/interrupts.hpp"
-#include <lock_guard.hpp>
+#include <scheduler/lock_guard.hpp>
 #include <vga.hpp>
 
 import string;

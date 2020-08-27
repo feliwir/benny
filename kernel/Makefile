@@ -2,13 +2,13 @@ include make.config
 include $(ARCHDIR)/make.config
 
 MODULES:=\
-kernel/mmap.pcm \
 kernel/string.pcm \
 kernel/util.pcm
 
 OBJS:=\
 $(ARCH_OBJS) \
 kernel/kernel.o \
+kernel/mmap.o \
 kernel/cxx.o
 
 .PHONY: all

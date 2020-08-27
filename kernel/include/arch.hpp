@@ -1,11 +1,10 @@
 #pragma once
 
-class Vga;
-struct multiboot_tag;
+class MMap;
 
 class Arch final {
 public:
-  void Initialize(multiboot_tag* bootInfo);
+  void Initialize(MMap &mmap);
   [[nodiscard]] inline const char *GetArchitecture() const { return m_archStr; }
 
 private:

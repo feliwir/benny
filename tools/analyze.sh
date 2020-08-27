@@ -1,0 +1,1 @@
+scan-build --use-c++=/usr/bin/clang++ --use-cc=/usr/bin/clang -analyze-headers -k -V make
