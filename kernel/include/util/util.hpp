@@ -2,6 +2,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define K 1024
+#define M (1024 * K)
+#define G (1024 * M)
+
 // Use C mangling so the compiler recognizes them and replaces them with
 // builtins
 extern "C" {

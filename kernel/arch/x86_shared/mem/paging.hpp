@@ -2,26 +2,13 @@
 #include <stdint.h>
 
 constexpr uintptr_t PAGE_SIZE = 4096;
-
-// Alignment related macro
-#define IS_ALIGN(addr) ((((uint32_t)(addr)) | 0xFFFFF000) == 0)
-#define PAGE_ALIGN(addr) ((((uint32_t)(addr)) & 0xFFFFF000) + 0x1000)
+constexpr uintptr_t LOAD_MEMORY_ADDRESS = 0xC0000000;
+constexpr uintptr_t KHEAP_INITIAL_SIZE = 48 * 1024 * 1024 + 1024;
 
 // Defone some address calculation macro
 #define PAGEDIR_INDEX(vaddr) (((uint32_t)vaddr) >> 22)
 #define PAGETBL_INDEX(vaddr) ((((uint32_t)vaddr) >> 12) & 0x3ff)
 #define PAGEFRAME_INDEX(vaddr) (((uint32_t)vaddr) & 0xfff)
-
-// Paging register manipulation macro
-#define SET_PGBIT(cr0) (cr0 = cr0 | 0x80000000)
-#define CLEAR_PSEBIT(cr4) (cr4 = cr4 & 0xffffffef)
-
-// Err code interpretation
-#define ERR_PRESENT 0x1
-#define ERR_RW 0x2
-#define ERR_USER 0x4
-#define ERR_RESERVED 0x8
-#define ERR_INST 0x10
 
 struct PageDirEntry {
   uint8_t present : 1;
@@ -67,33 +54,21 @@ struct PageDirectory {
 
 class Paging {
 public:
-  void Initialize();
+  static void Initialize();
+  static void AllocatePage(uintptr_t virtual_addr, uint32_t frame,
+                           int is_kernel, int is_writable);
+  static uintptr_t GetPhysicalAdress(uintptr_t virtual_addr);
 
-  void *virtual2phys(PageDirectory *dir, void *virtual_addr);
-  void *dumb_kmalloc(uint32_t size, int align);
-  void allocate_region(PageDirectory *dir, uint32_t start_va, uint32_t end_va,
-                       int iden_map, int is_kernel, int is_writable);
-
-  void allocate_page(PageDirectory *dir, uint32_t virtual_addr, uint32_t frame,
-                     int is_kernel, int is_writable);
-
-  void free_region(PageDirectory *dir, uint32_t start_va, uint32_t end_va,
-                   int free);
-
-  void free_page(PageDirectory *dir, uint32_t virtual_addr, int free);
-
-  void switch_page_directory(PageDirectory *page_dir, uint32_t phys);
-
-  void enable_paging();
-
-  void *ksbrk(int size);
-
-  void copy_page_directory(PageDirectory *dst, PageDirectory *src);
-
-  PageTable *copy_page_table(PageDirectory *src_page_dir,
-                             PageDirectory *dst_page_dir, uint32_t page_dir_idx,
-                             PageTable *src);
+  template <class T> static inline T *SimpleAlloc() {
+    T *result = reinterpret_cast<T *>(s_memoryOffset);
+    s_memoryOffset += sizeof(T);
+    return result;
+  }
 
 private:
-  uint8_t *tempMem;
+  static void Enable();
+
+  static PageDirectory *s_pageDir;
+  static uintptr_t s_memoryOffset;
+  static bool s_enabled;
 };

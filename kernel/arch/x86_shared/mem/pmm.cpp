@@ -36,7 +36,7 @@ void PMM::Initialize(MMap &mmap) {
       highestPage = top;
   }
 
-  size_t bitmap_size = div_roundup(highestPage, PAGE_SIZE) / 8;
+  size_t bitmap_size = kmath::div_roundup(highestPage, PAGE_SIZE) / 8;
 
   // Second, find a location with enough free pages to host the bitmap.
   for (size_t i = 0; i < mmap.GetNumInfos(); i++) {
@@ -50,7 +50,7 @@ void PMM::Initialize(MMap &mmap) {
       // Initialise entire bitmap to 1 (non-free)
       memset(bitmap_addr, 0xff, bitmap_size);
 
-      bitmap.SetData(bitmap_addr);
+      bitmap.SetData(bitmap_addr, bitmap_size);
 
       info.length -= bitmap_size;
       info.addr += bitmap_size;
@@ -75,7 +75,7 @@ void *PMM::InnerAlloc(uintptr_t count, uintptr_t limit) {
   uintptr_t p = 0;
 
   while (s_lastUsedIndex < limit) {
-    if (!bitmap.IsSet(s_lastUsedIndex)) {
+    if (!bitmap.IsSet(s_lastUsedIndex++)) {
       if (++p == count) {
         uintptr_t page = s_lastUsedIndex - count;
         for (uintptr_t i = page; i < s_lastUsedIndex; i++) {
@@ -83,10 +83,25 @@ void *PMM::InnerAlloc(uintptr_t count, uintptr_t limit) {
         }
         return (void *)(page * PAGE_SIZE);
       }
+    } else {
+      p = 0;
     }
   }
 
   return nullptr;
+}
+
+uintptr_t PMM::AllocBlock() {
+  TicketLockGuard(s_lock);
+  uintptr_t limit = highestPage / PAGE_SIZE;
+
+  while (s_lastUsedIndex < limit) {
+    if (!bitmap.IsSet(s_lastUsedIndex++)) {
+      return s_lastUsedIndex;
+    }
+  }
+
+  return 0;
 }
 
 void *PMM::Alloc(uintptr_t count) {

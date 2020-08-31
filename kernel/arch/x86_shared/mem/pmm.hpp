@@ -23,6 +23,9 @@ public:
   static void Initialize(MMap &memoryMap);
   static void *Alloc(uintptr_t count);
   static void *AllocZ(uintptr_t count);
+  static uintptr_t AllocBlock();
+
+  static inline Bitmap &GetBitmap() { return bitmap; }
 
 private:
   static void *InnerAlloc(uintptr_t count, uintptr_t limit);
